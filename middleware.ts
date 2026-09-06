@@ -12,8 +12,15 @@ export default auth((req) => {
 
   // Admin
   if (pathname.startsWith("/admin")) {
+    if (pathname.startsWith("/admin/pin")) {
+      if (!session) return NextResponse.redirect(new URL("/login?next=" + encodeURIComponent(pathname), req.url));
+      if (role !== "ADMIN") return NextResponse.redirect(new URL("/login?error=forbidden", req.url));
+      return NextResponse.next();
+    }
     if (!session) return NextResponse.redirect(new URL("/login?next=" + encodeURIComponent(pathname), req.url));
     if (role !== "ADMIN") return NextResponse.redirect(new URL("/login?error=forbidden", req.url));
+    const pinOk = req.cookies.get("admin_pin_ok")?.value === "1";
+    if (!pinOk) return NextResponse.redirect(new URL("/admin/pin?next=" + encodeURIComponent(pathname), req.url));
     return NextResponse.next();
   }
 

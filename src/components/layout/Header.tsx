@@ -9,6 +9,8 @@ export async function Header() {
 
   async function logout() {
     "use server";
+    const { clearPinCookie } = await import("@/lib/adminPin");
+    await clearPinCookie();
     await signOut({ redirectTo: "/" });
   }
 
