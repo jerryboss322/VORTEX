@@ -18,16 +18,21 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         const email = (credentials?.email as string)?.toLowerCase().trim();
         const password = credentials?.password as string;
         if (!email || !password) return null;
-        const user = await prisma.user.findUnique({ where: { email } });
-        if (!user || !user.isActive) return null;
-        const ok = await bcrypt.compare(password, user.passwordHash);
-        if (!ok) return null;
-        return {
-          id: user.id,
-          email: user.email,
-          name: user.name,
-          role: user.role,
-        } as any;
+        try {
+          const user = await prisma.user.findUnique({ where: { email } });
+          if (!user || !user.isActive) return null;
+          const ok = await bcrypt.compare(password, user.passwordHash);
+          if (!ok) return null;
+          return {
+            id: user.id,
+            email: user.email,
+            name: user.name,
+            role: user.role,
+          } as any;
+        } catch (err) {
+          console.error("[auth][authorize] DB error:", err);
+          return null;
+        }
       },
     }),
   ],

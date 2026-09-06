@@ -1,13 +1,21 @@
 import { signIn } from "@/lib/auth";
-import { redirect } from "next/navigation";
+import { isRedirectError } from "next/dist/client/components/redirect-error";
+import { AuthError } from "next-auth";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string }> }) {
   const sp = await searchParams;
+  const errorMessage =
+    sp.error === "CredentialsSignin"
+      ? "Invalid email or password."
+      : sp.error === "CallbackRouteError"
+        ? "Login failed — please try again. If this persists, the database may be unreachable."
+        : sp.error || null;
+
   return (
     <div className="mx-auto max-w-md px-4 py-12">
       <h1 className="text-xl font-bold">Login</h1>
       <p className="mt-1 text-sm text-zinc-400">Admin and contributors only.</p>
-      {sp.error && <div className="mt-4 rounded-md bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">{sp.error}</div>}
+      {errorMessage && <div className="mt-4 rounded-md bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">{errorMessage}</div>}
       <form
         action={async (formData: FormData) => {
           "use server";
@@ -16,8 +24,12 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
           const next = (formData.get("next") as string) || "/admin";
           try {
             await signIn("credentials", { email, password, redirectTo: next });
-          } catch (e: any) {
-            // NextAuth throws redirect
+          } catch (e) {
+            if (isRedirectError(e)) throw e;
+            if (e instanceof AuthError) {
+              const { redirect } = await import("next/navigation");
+              redirect(`/login?error=${encodeURIComponent(e.type)}&next=${encodeURIComponent(next)}`);
+            }
             throw e;
           }
         }}
