@@ -1,9 +1,16 @@
-import { signIn } from "@/lib/auth";
+import { signIn, auth } from "@/lib/auth";
 import { isRedirectError } from "next/dist/client/components/redirect-error";
 import { AuthError } from "next-auth";
+import { redirect } from "next/navigation";
 
 export default async function LoginPage({ searchParams }: { searchParams: Promise<{ error?: string; next?: string }> }) {
+  const session = await auth();
+  if (session?.user) {
+    const role = (session.user as any).role;
+    redirect(role === "ADMIN" ? "/admin" : "/contributor");
+  }
   const sp = await searchParams;
+  const isAdminNext = (sp.next || "/admin").startsWith("/admin");
   const errorMessage =
     sp.error === "CredentialsSignin"
       ? "Invalid email or password."
@@ -13,8 +20,8 @@ export default async function LoginPage({ searchParams }: { searchParams: Promis
 
   return (
     <div className="mx-auto max-w-md px-4 py-12">
-      <h1 className="text-xl font-bold">Login</h1>
-      <p className="mt-1 text-sm text-zinc-400">Admin and contributors only.</p>
+      <h1 className="text-xl font-bold">{isAdminNext ? "Admin sign in" : "Sign in"}</h1>
+      <p className="mt-1 text-sm text-zinc-400">{isAdminNext ? "Admin access — you arrived via /admin." : "Contributor access."}</p>
       {errorMessage && <div className="mt-4 rounded-md bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400">{errorMessage}</div>}
       <form
         action={async (formData: FormData) => {
