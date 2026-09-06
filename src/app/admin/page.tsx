@@ -25,10 +25,10 @@ export default async function AdminDashboard() {
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
       <h1 className="text-xl font-bold">Dashboard</h1>
       <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4"><div className="text-2xl font-bold">{stats.active}</div><div className="text-xs text-zinc-500 uppercase">Active Tips</div></div>
-        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4"><div className="text-2xl font-bold">{stats.pendingResults}</div><div className="text-xs text-zinc-500 uppercase">Pending Results</div></div>
-        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4"><div className="text-2xl font-bold">{stats.awaiting}</div><div className="text-xs text-zinc-500 uppercase">Awaiting Review</div></div>
-        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4"><div className="text-2xl font-bold">{stats.contributors}</div><div className="text-xs text-zinc-500 uppercase">Contributors</div></div>
+        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4 border-l-4 border-l-cyan-500/50"><div className="text-2xl font-bold">{stats.active}</div><div className="text-xs text-zinc-500 uppercase">Active Tips</div></div>
+        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4 border-l-4 border-l-violet-500/50"><div className="text-2xl font-bold">{stats.pendingResults}</div><div className="text-xs text-zinc-500 uppercase">Pending Results</div></div>
+        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4 border-l-4 border-l-amber-500/50"><div className="text-2xl font-bold">{stats.awaiting}</div><div className="text-xs text-zinc-500 uppercase">Awaiting Review</div></div>
+        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4 border-l-4 border-l-zinc-700"><div className="text-2xl font-bold">{stats.contributors}</div><div className="text-xs text-zinc-500 uppercase">Contributors</div></div>
       </div>
 
       <div className="mt-8 grid lg:grid-cols-2 gap-6">

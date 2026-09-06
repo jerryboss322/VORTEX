@@ -12,6 +12,9 @@
   --success: #22c55e;
   --warning: #eab308;
   --danger: #ef4444;
+  --group-tips: #22d3ee;
+  --group-results: #a78bfa;
+  --group-submit: #facc15;
 }
 
 @theme inline {

@@ -21,15 +21,15 @@ export async function Header() {
 
         {/* Desktop */}
         <nav className="hidden items-center gap-6 text-sm sm:flex">
-          <Link href="/tips" className="text-zinc-400 hover:text-white transition-colors">
+          <Link href="/tips" className="text-cyan-300/80 hover:text-cyan-300 underline decoration-cyan-500/20 underline-offset-4 transition-colors">
             Tips
           </Link>
-          <Link href="/results" className="text-zinc-400 hover:text-white transition-colors">
+          <Link href="/results" className="text-violet-300/80 hover:text-violet-300 underline decoration-violet-500/20 underline-offset-4 transition-colors">
             Results
           </Link>
           {!isAuthed && (
             <>
-              <Link href="/submit" className="text-zinc-400 hover:text-white">
+              <Link href="/submit" className="rounded-full bg-amber-400 px-3 py-1.5 text-xs font-bold text-black hover:bg-amber-300">
                 Submit Tip
               </Link>
               <Link href="/admin" className="rounded-md border border-[#262626] px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-900 hover:text-white">
@@ -39,7 +39,7 @@ export async function Header() {
           )}
           {isAuthed && role === "CONTRIBUTOR" && (
             <>
-              <Link href="/submit" className="text-zinc-400 hover:text-white">
+              <Link href="/submit" className="rounded-full bg-amber-400 px-3 py-1.5 text-xs font-bold text-black hover:bg-amber-300">
                 Submit Tip
               </Link>
               <Link href="/contributor" className="text-zinc-400 hover:text-white">

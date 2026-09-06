@@ -87,7 +87,7 @@ export function ImageUploader({ name = "image", required, initialUrl, variant = 
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
         onClick={() => inputRef.current?.click()}
-        className={`relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-[#0a0a0a] p-4 text-center transition-colors ${height} ${dragOver ? "border-white bg-zinc-900" : "border-[#262626] hover:border-zinc-600"} ${error ? "border-red-500/50" : ""}`}
+        className={`relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-[#0a0a0a] p-4 text-center transition-colors ${height} ${dragOver ? "border-cyan-400 bg-cyan-500/5" : "border-[#262626] hover:border-zinc-600"} ${error ? "border-red-500/50" : ""}`}
       >
         {preview ? (
           <>

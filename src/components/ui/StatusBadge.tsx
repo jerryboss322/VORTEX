@@ -1,11 +1,11 @@
 import { cn } from "@/lib/utils";
 
 const map: Record<string, string> = {
-  PENDING: "bg-zinc-800 text-zinc-300 border-zinc-700",
-  WON: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  PENDING: "bg-amber-500/10 text-amber-300 border-amber-500/20",
+  WON: "bg-violet-500/10 text-violet-300 border-violet-500/20",
   LOST: "bg-red-500/10 text-red-400 border-red-500/20",
-  CANCELLED: "bg-amber-500/10 text-amber-400 border-amber-500/20",
-  APPROVED: "bg-emerald-500/10 text-emerald-400 border-emerald-500/20",
+  CANCELLED: "bg-zinc-800 text-zinc-400 border-zinc-700",
+  APPROVED: "bg-violet-500/10 text-violet-300 border-violet-500/20",
   REJECTED: "bg-red-500/10 text-red-400 border-red-500/20",
 };
 

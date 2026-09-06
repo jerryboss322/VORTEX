@@ -28,7 +28,7 @@ export default async function TipsPage({ searchParams }: { searchParams: Promise
           <option value="LOST">Lost</option>
           <option value="CANCELLED">Cancelled</option>
         </select>
-        <button className="rounded-md bg-white px-4 py-2 text-sm font-semibold text-black">Filter</button>
+        <button className="rounded-md bg-cyan-500 px-4 py-2 text-sm font-bold text-black hover:bg-cyan-400">Filter</button>
       </form>
       <div className="mt-6">
         {tips.length === 0 ? <EmptyState title="No tips found." /> : <DateGrouped groups={groups} />}
