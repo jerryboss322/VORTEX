@@ -27,14 +27,26 @@ export function TipRow({ tip }: { tip: any }) {
           title="Delete tip?"
           description={`This will permanently delete ${tip.bookingCode} and its R2 image. This cannot be undone.`}
           confirmLabel="Delete"
-          onConfirm={() => deleteTipAction(tip.id)}
+          onConfirm={async () => {
+            try {
+              await deleteTipAction(tip.id);
+            } catch (e: any) {
+              alert(e?.message || "Failed to delete. Please login again.");
+            }
+          }}
         >
           <button className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700">Delete</button>
         </ConfirmDialog>
         <form
           action={(fd: FormData) => {
             const s = fd.get("status") as string;
-            start(() => updateTipStatusAction(tip.id, s));
+            start(async () => {
+              try {
+                await updateTipStatusAction(tip.id, s);
+              } catch (e: any) {
+                alert(e?.message || "Failed to update status. Please login again.");
+              }
+            });
           }}
           className="flex items-center gap-1"
         >
