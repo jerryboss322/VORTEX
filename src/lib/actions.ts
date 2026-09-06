@@ -5,16 +5,6 @@ import { requireAdmin, requireContributor } from "@/lib/permissions";
 import { uploadSlipImage, deleteSlipImage } from "@/lib/storage";
 import { revalidatePath } from "next/cache";
 import bcrypt from "bcryptjs";
-import fs from "node:fs/promises";
-import path from "node:path";
-
-async function saveLocalFallback(file: File, key: string): Promise<string> {
-  const buffer = Buffer.from(await file.arrayBuffer());
-  const full = path.join(process.cwd(), "public", key);
-  await fs.mkdir(path.dirname(full), { recursive: true });
-  await fs.writeFile(full, buffer);
-  return `/${key}`;
-}
 
 export async function createTipAction(formData: FormData): Promise<void> {
   const session = await requireAdmin();
@@ -31,15 +21,10 @@ export async function createTipAction(formData: FormData): Promise<void> {
   if (!file || file.size === 0) throw new Error("Slip screenshot is required");
   let imageUrl = "";
   let storageKey = "";
-  // Try R2
   try {
     const { url, key } = await uploadSlipImage(file);
     storageKey = key;
-    if (url.startsWith("/uploads/")) {
-      imageUrl = await saveLocalFallback(file, url.slice(1));
-    } else {
-      imageUrl = url;
-    }
+    imageUrl = url;
   } catch (e: any) {
     throw new Error(e.message || "Upload failed");
   }
@@ -84,9 +69,7 @@ export async function updateTipAction(id: string, formData: FormData): Promise<v
   if (file && file.size > 0) {
     const existing = await prisma.tip.findUnique({ where: { id } });
     const { url, key } = await uploadSlipImage(file);
-    let imageUrl = url;
-    if (url.startsWith("/uploads/")) imageUrl = await saveLocalFallback(file, url.slice(1));
-    update.imageUrl = imageUrl;
+    update.imageUrl = url;
     update.storageKey = key;
     if (existing?.storageKey) await deleteSlipImage(existing.storageKey);
   }
@@ -136,12 +119,9 @@ export async function createSubmissionAction(formData: FormData): Promise<void> 
   });
   const file = formData.get("image") as File | null;
   if (!file || file.size === 0) throw new Error("Slip screenshot is required");
-  let imageUrl = "";
-  let storageKey = "";
   const { url, key } = await uploadSlipImage(file);
-  storageKey = key;
-  if (url.startsWith("/uploads/")) imageUrl = await saveLocalFallback(file, url.slice(1));
-  else imageUrl = url;
+  const storageKey = key;
+  const imageUrl = url;
 
   await prisma.submission.create({
     data: {
