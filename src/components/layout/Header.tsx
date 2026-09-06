@@ -28,9 +28,14 @@ export async function Header() {
             Results
           </Link>
           {!isAuthed && (
-            <Link href="/admin" className="rounded-md border border-[#262626] px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-900 hover:text-white">
-              Admin
-            </Link>
+            <>
+              <Link href="/submit" className="text-zinc-400 hover:text-white">
+                Submit Tip
+              </Link>
+              <Link href="/admin" className="rounded-md border border-[#262626] px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-900 hover:text-white">
+                Admin
+              </Link>
+            </>
           )}
           {isAuthed && role === "CONTRIBUTOR" && (
             <>
@@ -67,9 +72,12 @@ export async function Header() {
             <Link href="/tips" className="text-zinc-300">Tips</Link>
             <Link href="/results" className="text-zinc-300">Results</Link>
             {!isAuthed && (
-              <Link href="/admin" className="rounded-md border border-[#262626] px-3 py-2 text-center text-zinc-300">
-                Admin
-              </Link>
+              <>
+                <Link href="/submit" className="text-zinc-300">Submit Tip</Link>
+                <Link href="/admin" className="rounded-md border border-[#262626] px-3 py-2 text-center text-zinc-300">
+                  Admin
+                </Link>
+              </>
             )}
             {isAuthed && role === "CONTRIBUTOR" && (
               <>

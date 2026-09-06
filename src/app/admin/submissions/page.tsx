@@ -18,7 +18,9 @@ export default async function AdminSubmissionsPage() {
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={s.imageUrl} alt={s.bookingCode} className="h-64 w-full object-contain bg-zinc-900" />
               <div className="p-4 space-y-2 text-sm">
-                <div className="text-xs text-zinc-500">Contributor: {s.submittedBy.email}</div>
+                <div className="text-xs text-zinc-500">
+                  {s.submittedBy ? `Contributor: ${s.submittedBy.email}` : s.guestName ? `Guest: ${s.guestName} (member)` : "Guest (member)"} {s.source === "member" && !s.submittedBy ? "· member" : ""}
+                </div>
                 <div className="font-mono font-bold">{s.bookingCode}</div>
                 <div className="text-xs text-zinc-400">{s.bookmaker} · Odds {s.odds ?? "—"} · Conf {s.confidence ?? "—"}%</div>
                 {s.note && <div className="text-xs text-zinc-300">{s.note}</div>}

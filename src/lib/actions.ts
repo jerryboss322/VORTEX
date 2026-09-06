@@ -96,8 +96,9 @@ export async function updateTipStatusAction(id: string, status: string): Promise
   revalidatePath(`/tips/${id}`);
 }
 
-// Submissions
+// Submissions — per-user and per-IP
 const submitTimestamps: Map<string, number[]> = new Map();
+const anonTimestamps: Map<string, number[]> = new Map();
 
 export async function createSubmissionAction(formData: FormData): Promise<void> {
   const session = await requireContributor();
@@ -138,6 +139,50 @@ export async function createSubmissionAction(formData: FormData): Promise<void> 
   revalidatePath("/admin/submissions");
 }
 
+export async function createPublicSubmissionAction(formData: FormData): Promise<void> {
+  // honeypot
+  if ((formData.get("website") as string)?.trim()) throw new Error("Invalid submission");
+  // anon rate limit by IP hash
+  const { headers } = await import("next/headers");
+  const h = await headers();
+  const rawIp = h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "anon";
+  const ipHash = rawIp.slice(0, 64);
+  const now = Date.now();
+  const arr = anonTimestamps.get(ipHash) || [];
+  const recent = arr.filter((t) => now - t < 3600000);
+  if (recent.length >= 5) throw new Error("Rate limited: max 5 submissions per hour per IP");
+  recent.push(now);
+  anonTimestamps.set(ipHash, recent);
+
+  const data = tipSchema.parse({
+    bookingCode: formData.get("bookingCode"),
+    bookmaker: formData.get("bookmaker"),
+    odds: formData.get("odds") || null,
+    confidence: formData.get("confidence") || null,
+    note: formData.get("note") || null,
+  });
+  const guestName = (formData.get("guestName") as string)?.trim().slice(0, 80) || null;
+  const file = formData.get("image") as File | null;
+  if (!file || file.size === 0) throw new Error("Slip screenshot is required");
+  const { url, key } = await uploadSlipImage(file);
+  await prisma.submission.create({
+    data: {
+      imageUrl: url,
+      storageKey: key,
+      bookingCode: data.bookingCode.toUpperCase().trim(),
+      bookmaker: data.bookmaker.trim(),
+      odds: data.odds ?? null,
+      confidence: data.confidence ?? null,
+      note: data.note || null,
+      submittedById: null,
+      guestName,
+      ipHash,
+      source: "member",
+    },
+  });
+  revalidatePath("/admin/submissions");
+}
+
 export async function approveSubmissionAction(id: string): Promise<void> {
   const session = await requireAdmin();
   const reviewerId = (session.user as any).id;
@@ -156,7 +201,7 @@ export async function approveSubmissionAction(id: string): Promise<void> {
         confidence: sub.confidence,
         note: sub.note,
         status: "PENDING",
-        createdById: sub.submittedById,
+        createdById: sub.submittedById ?? reviewerId,
       },
     });
     await tx.activityLog.create({ data: { userId: reviewerId, action: "TIP_APPROVED", targetType: "Submission", targetId: id } });

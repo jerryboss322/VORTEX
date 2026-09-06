@@ -73,8 +73,11 @@ model Submission {
   confidence   Int?
   note         String?          @db.Text
   status       SubmissionStatus @default(PENDING)
-  submittedById String
-  submittedBy  User             @relation("SubmissionAuthor", fields: [submittedById], references: [id])
+  submittedById String?
+  submittedBy  User?            @relation("SubmissionAuthor", fields: [submittedById], references: [id])
+  guestName    String?
+  ipHash       String?
+  source       String           @default("member")
   reviewedById String?
   reviewedBy   User?            @relation("SubmissionReviewer", fields: [reviewedById], references: [id])
   reviewedAt   DateTime?

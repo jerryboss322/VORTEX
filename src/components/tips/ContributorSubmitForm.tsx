@@ -3,16 +3,16 @@ import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 
-function SubmitButton() {
+function SubmitButton({ mode }: { mode: "public" | "contributor" }) {
   const { pending } = useFormStatus();
   return (
     <button disabled={pending} className="w-full rounded-lg bg-white py-3 text-sm font-bold text-black hover:bg-zinc-200 disabled:opacity-50 disabled:cursor-not-allowed">
-      {pending ? "Submitting…" : "Submit for Review"}
+      {pending ? "Submitting…" : mode === "public" ? "Submit as Guest" : "Submit for Review"}
     </button>
   );
 }
 
-export function ContributorSubmitForm({ action }: { action: (fd: FormData) => Promise<void> }) {
+export function ContributorSubmitForm({ action, mode = "contributor" }: { action: (fd: FormData) => Promise<void>; mode?: "public" | "contributor" }) {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
 
@@ -48,7 +48,7 @@ export function ContributorSubmitForm({ action }: { action: (fd: FormData) => Pr
   return (
     <form id="contrib-form" action={handle} className="space-y-5 rounded-xl border border-[#262626] bg-gradient-to-b from-[#141414] to-[#0f0f0f] p-6 sm:p-7">
       {error && <div className="rounded-md bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400" role="alert">{error}</div>}
-      {success && <div className="rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 text-sm text-emerald-400">Submitted for review — admin will approve shortly.</div>}
+      {success && <div className="rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 text-sm text-emerald-400">{mode === "public" ? "Submitted as guest — admin will review shortly. No account needed." : "Submitted for review — admin will approve shortly."}</div>}
 
       <div>
         <label className="text-xs font-semibold tracking-widest text-zinc-400 uppercase">Betting Slip *</label>
@@ -87,12 +87,20 @@ export function ContributorSubmitForm({ action }: { action: (fd: FormData) => Pr
         </div>
       </div>
 
+      {mode === "public" && (
+        <div>
+          <label htmlFor="guestName" className="text-xs font-medium text-zinc-300">Your name <span className="text-zinc-500 font-normal">— optional, shown to admin only</span></label>
+          <input id="guestName" name="guestName" maxLength={80} placeholder="e.g. Jboss" className="mt-1 w-full rounded-lg border border-[#262626] bg-[#0a0a0a] px-3 py-2.5 text-sm placeholder:text-zinc-600 outline-none" />
+          <input name="website" tabIndex={-1} autoComplete="off" className="hidden" aria-hidden="true" />
+        </div>
+      )}
+
       <div>
         <label htmlFor="note" className="text-xs font-medium text-zinc-300">Note <span className="text-zinc-500 font-normal">— optional, max 500</span></label>
         <textarea id="note" name="note" rows={3} maxLength={500} placeholder="Any context for admin — not shown publicly by default." className="mt-1 w-full rounded-lg border border-[#262626] bg-[#0a0a0a] px-3 py-2.5 text-sm placeholder:text-zinc-600 outline-none resize-none" />
       </div>
 
-      <SubmitButton />
+      <SubmitButton mode={mode} />
       <p className="text-center text-[11px] text-zinc-500">By submitting you agree admin may approve or reject. Approved slips become Official Tips.</p>
     </form>
   );

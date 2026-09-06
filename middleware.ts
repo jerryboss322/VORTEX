@@ -17,8 +17,8 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // Contributor + submit
-  if (pathname.startsWith("/contributor") || pathname.startsWith("/submit")) {
+  // Contributor (submit is now public for anon members via guestName)
+  if (pathname.startsWith("/contributor")) {
     if (!session) return NextResponse.redirect(new URL("/login?next=" + encodeURIComponent(pathname), req.url));
     if (role !== "ADMIN" && role !== "CONTRIBUTOR") return NextResponse.redirect(new URL("/login?error=forbidden", req.url));
     return NextResponse.next();
@@ -34,5 +34,5 @@ export default auth((req) => {
 });
 
 export const config = {
-  matcher: ["/admin/:path*", "/contributor/:path*", "/submit/:path*", "/api/admin/:path*"],
+  matcher: ["/admin/:path*", "/contributor/:path*", "/api/admin/:path*"],
 };
