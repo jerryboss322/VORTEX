@@ -30,14 +30,9 @@ export async function Header() {
             Results
           </Link>
           {!isAuthed && (
-            <>
-              <Link href="/submit" className="rounded-full bg-amber-400 px-3 py-1.5 text-xs font-bold text-black hover:bg-amber-300">
-                Submit Tip
-              </Link>
-              <Link href="/admin" className="rounded-md border border-[#262626] px-3 py-1.5 text-xs font-medium text-zinc-300 hover:bg-zinc-900 hover:text-white">
-                Admin
-              </Link>
-            </>
+            <Link href="/submit" className="rounded-full bg-amber-400 px-3 py-1.5 text-xs font-bold text-black hover:bg-amber-300">
+              Submit Tip
+            </Link>
           )}
           {isAuthed && role === "CONTRIBUTOR" && (
             <>
@@ -73,14 +68,7 @@ export async function Header() {
           <nav className="flex flex-col px-4 py-3 gap-3 text-sm">
             <Link href="/tips" className="text-zinc-300">Tips</Link>
             <Link href="/results" className="text-zinc-300">Results</Link>
-            {!isAuthed && (
-              <>
-                <Link href="/submit" className="text-zinc-300">Submit Tip</Link>
-                <Link href="/admin" className="rounded-md border border-[#262626] px-3 py-2 text-center text-zinc-300">
-                  Admin
-                </Link>
-              </>
-            )}
+            {!isAuthed && <Link href="/submit" className="text-zinc-300">Submit Tip</Link>}
             {isAuthed && role === "CONTRIBUTOR" && (
               <>
                 <Link href="/submit" className="text-zinc-300">Submit Tip</Link>
