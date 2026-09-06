@@ -1,0 +1,100 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+  CONTRIBUTOR
+}
+
+enum TipStatus {
+  PENDING
+  WON
+  LOST
+  CANCELLED
+}
+
+enum SubmissionStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String?
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(CONTRIBUTOR)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  tips           Tip[]        @relation("TipAuthor")
+  submissions    Submission[] @relation("SubmissionAuthor")
+  reviewedSubs   Submission[] @relation("SubmissionReviewer")
+  activityLogs   ActivityLog[]
+}
+
+model Tip {
+  id          String    @id @default(cuid())
+  imageUrl    String
+  storageKey  String?
+  bookingCode String
+  bookmaker   String
+  odds        Float?
+  confidence  Int?
+  note        String?   @db.Text
+  status      TipStatus @default(PENDING)
+  createdById String
+  createdBy   User      @relation("TipAuthor", fields: [createdById], references: [id])
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([bookmaker])
+  @@index([createdById])
+}
+
+model Submission {
+  id           String           @id @default(cuid())
+  imageUrl     String
+  storageKey   String?
+  bookingCode  String
+  bookmaker    String
+  odds         Float?
+  confidence   Int?
+  note         String?          @db.Text
+  status       SubmissionStatus @default(PENDING)
+  submittedById String
+  submittedBy  User             @relation("SubmissionAuthor", fields: [submittedById], references: [id])
+  reviewedById String?
+  reviewedBy   User?            @relation("SubmissionReviewer", fields: [reviewedById], references: [id])
+  reviewedAt   DateTime?
+  createdAt    DateTime         @default(now())
+  updatedAt    DateTime         @updatedAt
+
+  @@index([status])
+  @@index([submittedById])
+  @@index([createdAt])
+}
+
+model ActivityLog {
+  id         String   @id @default(cuid())
+  userId     String?
+  user       User?    @relation(fields: [userId], references: [id])
+  action     String
+  targetType String?
+  targetId   String?
+  metadata   Json?
+  createdAt  DateTime @default(now())
+
+  @@index([userId])
+  @@index([createdAt])
+}
