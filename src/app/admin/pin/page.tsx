@@ -40,7 +40,6 @@ export default async function AdminPinPage({ searchParams }: { searchParams: Pro
             className="mt-1 w-full rounded-lg border border-[#262626] bg-[#0a0a0a] px-3 py-3 text-center text-lg tracking-[0.5em] font-mono outline-none focus:border-violet-500"
             autoFocus
           />
-          <p className="mt-1 text-[11px] text-zinc-500">Hint: 1740</p>
         </div>
         <button className="w-full rounded-lg bg-white py-2.5 text-sm font-bold text-black hover:bg-zinc-200">Unlock</button>
       </form>
