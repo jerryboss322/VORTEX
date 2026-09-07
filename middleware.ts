@@ -10,15 +10,11 @@ export default auth((req) => {
   const publicPrefixes = ["/_next", "/api/auth", "/login", "/api/health"];
   if (publicPrefixes.some((p) => pathname.startsWith(p))) return NextResponse.next();
 
-  // Admin
+  // Admin — PIN 1740 only (no email/password)
   if (pathname.startsWith("/admin")) {
     if (pathname.startsWith("/admin/pin")) {
-      if (!session) return NextResponse.redirect(new URL("/login?next=" + encodeURIComponent(pathname), req.url));
-      if (role !== "ADMIN") return NextResponse.redirect(new URL("/login?error=forbidden", req.url));
       return NextResponse.next();
     }
-    if (!session) return NextResponse.redirect(new URL("/login?next=" + encodeURIComponent(pathname), req.url));
-    if (role !== "ADMIN") return NextResponse.redirect(new URL("/login?error=forbidden", req.url));
     const pinOk = req.cookies.get("admin_pin_ok")?.value === "1";
     if (!pinOk) return NextResponse.redirect(new URL("/admin/pin?next=" + encodeURIComponent(pathname), req.url));
     return NextResponse.next();
@@ -31,8 +27,10 @@ export default auth((req) => {
     return NextResponse.next();
   }
 
-  // API admin protection
+  // API admin protection — PIN also grants
   if (pathname.startsWith("/api/admin")) {
+    const pinOk = req.cookies.get("admin_pin_ok")?.value === "1";
+    if (pinOk) return NextResponse.next();
     if (!session || role !== "ADMIN") return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     return NextResponse.next();
   }

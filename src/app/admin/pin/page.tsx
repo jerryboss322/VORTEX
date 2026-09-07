@@ -1,12 +1,9 @@
 import { verifyPin, setPinCookie } from "@/lib/adminPin";
-import { auth } from "@/lib/auth";
 import { redirect } from "next/navigation";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminPinPage({ searchParams }: { searchParams: Promise<{ next?: string; error?: string }> }) {
-  const session = await auth();
-  if (!session || (session.user as any).role !== "ADMIN") redirect("/login?next=/admin/pin");
 
   const sp = await searchParams;
   const next = sp.next || "/admin";
