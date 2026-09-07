@@ -14,6 +14,8 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: {
     default: "TipsHub — Betting Tips & Codes",
@@ -29,8 +31,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
-      <body className="min-h-full flex flex-col bg-[#0a0a0a] text-[#ededed]">
+    <html lang="en" suppressHydrationWarning className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+      <body suppressHydrationWarning className="min-h-full flex flex-col bg-[#0a0a0a] text-[#ededed]">
         <Header />
         <main className="flex-1">{children}</main>
         <Toaster />
