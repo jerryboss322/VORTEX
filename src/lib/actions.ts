@@ -1,10 +1,9 @@
 "use server";
 import { prisma } from "@/lib/db";
-import { tipSchema, userCreateSchema } from "@/lib/validations";
-import { requireAdmin, requireContributor } from "@/lib/permissions";
+import { tipSchema } from "@/lib/validations";
+import { requireAdmin } from "@/lib/permissions";
 import { uploadSlipImage, deleteSlipImage } from "@/lib/storage";
 import { revalidatePath } from "next/cache";
-import bcrypt from "bcryptjs";
 
 export async function createTipAction(formData: FormData): Promise<void> {
   const session = await requireAdmin();
@@ -96,53 +95,12 @@ export async function updateTipStatusAction(id: string, status: string): Promise
   revalidatePath(`/tips/${id}`);
 }
 
-// Submissions — per-user and per-IP
-const submitTimestamps: Map<string, number[]> = new Map();
+// Submissions — simple public (guestName + IP limit)
 const anonTimestamps: Map<string, number[]> = new Map();
 
 export async function createSubmissionAction(formData: FormData): Promise<void> {
-  const session = await requireContributor();
-  const userId = (session.user as any).id;
-  // rate limit 10/hour
-  const now = Date.now();
-  const arr = submitTimestamps.get(userId) || [];
-  const recent = arr.filter((t) => now - t < 3600000);
-  if (recent.length >= 10) throw new Error("Rate limited: max 10 submissions per hour");
-  recent.push(now);
-  submitTimestamps.set(userId, recent);
-
-  const data = tipSchema.parse({
-    bookingCode: formData.get("bookingCode"),
-    bookmaker: formData.get("bookmaker"),
-    odds: formData.get("odds") || null,
-    confidence: formData.get("confidence") || null,
-    note: formData.get("note") || null,
-  });
-  const file = formData.get("image") as File | null;
-  if (!file || file.size === 0) throw new Error("Slip screenshot is required");
-  const { url, key } = await uploadSlipImage(file);
-  const storageKey = key;
-  const imageUrl = url;
-
-  await prisma.submission.create({
-    data: {
-      imageUrl,
-      storageKey,
-      bookingCode: data.bookingCode.toUpperCase().trim(),
-      bookmaker: data.bookmaker.trim(),
-      odds: data.odds ?? null,
-      confidence: data.confidence ?? null,
-      note: data.note || null,
-      submittedById: userId,
-    },
-  });
-  revalidatePath("/admin/submissions");
-}
-
-export async function createPublicSubmissionAction(formData: FormData): Promise<void> {
   // honeypot
   if ((formData.get("website") as string)?.trim()) throw new Error("Invalid submission");
-  // anon rate limit by IP hash
   const { headers } = await import("next/headers");
   const h = await headers();
   const rawIp = h.get("x-forwarded-for")?.split(",")[0]?.trim() || h.get("x-real-ip") || "anon";
@@ -183,6 +141,8 @@ export async function createPublicSubmissionAction(formData: FormData): Promise<
   revalidatePath("/admin/submissions");
 }
 
+export const createPublicSubmissionAction = createSubmissionAction;
+
 export async function approveSubmissionAction(id: string): Promise<void> {
   const session = await requireAdmin();
   const reviewerId = (session.user as any).id;
@@ -216,21 +176,6 @@ export async function rejectSubmissionAction(id: string): Promise<void> {
   const reviewerId = (session.user as any).id;
   await prisma.submission.update({ where: { id }, data: { status: "REJECTED", reviewedById: reviewerId, reviewedAt: new Date() } });
   revalidatePath("/admin/submissions");
-}
-
-export async function createContributorAction(formData: FormData): Promise<void> {
-  await requireAdmin();
-  const data = userCreateSchema.parse({
-    name: formData.get("name"),
-    email: formData.get("email"),
-    password: formData.get("password"),
-    role: formData.get("role") || "CONTRIBUTOR",
-  });
-  const hash = await bcrypt.hash(data.password, 10);
-  await prisma.user.create({
-    data: { name: data.name, email: data.email.toLowerCase(), passwordHash: hash, role: data.role as any },
-  });
-  revalidatePath("/admin/contributors");
 }
 
 export async function toggleContributorAction(id: string): Promise<void> {

@@ -43,10 +43,9 @@ export async function uploadSlipImage(file: File): Promise<{ url: string; key: s
   if (!isJpeg && !isPng && !isWebp) throw new Error("File signature does not match image type");
 
   if (!s3) {
-    // Local dev fallback: store under public/uploads and return local url
-    // We write via filesystem in server action wrapper instead
-    // Here we just return a placeholder key; caller handles local write
-    return { url: `/uploads/${key}`, key };
+    // Simple fallback: store as data URL (no R2 env needed, works on Vercel)
+    const base64 = buffer.toString("base64");
+    return { url: `data:${file.type};base64,${base64}`, key };
   }
 
   await s3.send(
