@@ -1,57 +1,33 @@
-import { prisma } from "@/lib/db";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
 
-export default async function AdminDashboard() {
-  let stats = { active: 0, pendingResults: 0, awaiting: 0, contributors: 0 };
-  let recentTips: any[] = [];
-  let pendingSubs: any[] = [];
-  try {
-    const [active, pending, awaiting, contributors, tips, subs] = await Promise.all([
-      prisma.tip.count({ where: { status: "PENDING" } }),
-      prisma.tip.count({ where: { status: "PENDING" } }), // pending results same as active for MVP
-      prisma.submission.count({ where: { status: "PENDING" } }),
-      prisma.user.count({ where: { role: "CONTRIBUTOR" } }),
-      prisma.tip.findMany({ orderBy: { createdAt: "desc" }, take: 5 }),
-      prisma.submission.findMany({ where: { status: "PENDING" }, orderBy: { createdAt: "desc" }, take: 5, include: { submittedBy: true } }),
-    ]);
-    stats = { active, pendingResults: pending, awaiting, contributors };
-    recentTips = tips;
-    pendingSubs = subs;
-  } catch {}
-
+export default function AdminPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
-      <h1 className="text-xl font-bold">Dashboard</h1>
-      <div className="mt-4 grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4 border-l-4 border-l-cyan-500/50"><div className="text-2xl font-bold">{stats.active}</div><div className="text-xs text-zinc-500 uppercase">Active Tips</div></div>
-        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4 border-l-4 border-l-violet-500/50"><div className="text-2xl font-bold">{stats.pendingResults}</div><div className="text-xs text-zinc-500 uppercase">Pending Results</div></div>
-        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4 border-l-4 border-l-amber-500/50"><div className="text-2xl font-bold">{stats.awaiting}</div><div className="text-xs text-zinc-500 uppercase">Awaiting Review</div></div>
-        <div className="rounded-lg border border-[#262626] bg-[#141414] p-4 border-l-4 border-l-zinc-700"><div className="text-2xl font-bold">{stats.contributors}</div><div className="text-xs text-zinc-500 uppercase">Contributors</div></div>
+    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10">
+      <h1 className="text-2xl font-bold">Admin</h1>
+      <p className="mt-1 text-sm text-zinc-400">PIN 1740 — simple controls.</p>
+
+      <div className="mt-6 grid gap-4 sm:grid-cols-3">
+        <Link href="/admin/tips" className="rounded-xl border border-[#262626] bg-[#141414] p-5 hover:bg-zinc-900">
+          <div className="h-2 w-8 rounded bg-cyan-500/70 mb-3" />
+          <div className="text-sm font-semibold">Manage Tips</div>
+          <div className="text-xs text-zinc-500 mt-1">Publish, edit odds, delete, set WON/LOST</div>
+        </Link>
+        <Link href="/admin/submissions" className="rounded-xl border border-[#262626] bg-[#141414] p-5 hover:bg-zinc-900">
+          <div className="h-2 w-8 rounded bg-amber-400/70 mb-3" />
+          <div className="text-sm font-semibold">Submissions</div>
+          <div className="text-xs text-zinc-500 mt-1">Review guest tips → Approve/Reject</div>
+        </Link>
+        <Link href="/tips" className="rounded-xl border border-[#262626] bg-[#141414] p-5 hover:bg-zinc-900">
+          <div className="h-2 w-8 rounded bg-violet-400/70 mb-3" />
+          <div className="text-sm font-semibold">View Site</div>
+          <div className="text-xs text-zinc-500 mt-1">See what members see</div>
+        </Link>
       </div>
 
-      <div className="mt-8 grid lg:grid-cols-2 gap-6">
-        <section className="rounded-lg border border-[#262626] bg-[#141414] p-4">
-          <div className="flex items-center justify-between"><h2 className="text-sm font-semibold">Recent Tips</h2><Link href="/admin/tips" className="text-xs text-zinc-400">Manage →</Link></div>
-          <div className="mt-3 space-y-2">
-            {recentTips.length === 0 ? <p className="text-xs text-zinc-500">No tips yet.</p> : recentTips.map((t) => (
-              <Link key={t.id} href={`/tips/${t.id}`} className="flex items-center justify-between rounded-md border border-[#262626] bg-[#0a0a0a] px-3 py-2 text-xs">
-                <span className="font-mono">{t.bookingCode}</span><span className="text-zinc-500">{t.status}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
-        <section className="rounded-lg border border-[#262626] bg-[#141414] p-4">
-          <div className="flex items-center justify-between"><h2 className="text-sm font-semibold">Awaiting Review</h2><Link href="/admin/submissions" className="text-xs text-zinc-400">Review →</Link></div>
-          <div className="mt-3 space-y-2">
-            {pendingSubs.length === 0 ? <p className="text-xs text-zinc-500">No submissions awaiting review.</p> : pendingSubs.map((s) => (
-              <div key={s.id} className="flex items-center justify-between rounded-md border border-[#262626] bg-[#0a0a0a] px-3 py-2 text-xs">
-                <span className="font-mono">{s.bookingCode}</span><span className="text-zinc-500">{s.submittedBy?.email ?? (s.guestName ? `Guest: ${s.guestName}` : "Guest")}</span>
-              </div>
-            ))}
-          </div>
-        </section>
+      <div className="mt-6 rounded-lg border border-[#262626] bg-[#141414] p-4 text-sm text-zinc-400">
+        Tip: Go to <span className="text-white font-mono">/admin</span> directly, enter <span className="text-white font-bold">1740</span>, then use the cards above. No extra env needed.
       </div>
     </div>
   );
