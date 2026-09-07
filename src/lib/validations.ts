@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const bookingCodeSchema = z.string().trim().min(2).max(50);
 export const bookmakerSchema = z.string().trim().min(2).max(50);
-export const oddsSchema = z.coerce.number().positive().max(1000).optional().nullable();
+export const oddsSchema = z.coerce.number().positive().max(100000).optional().nullable();
 export const confidenceSchema = z.coerce.number().int().min(0).max(100).optional().nullable();
 export const noteSchema = z.string().trim().max(500).optional().nullable();
 
