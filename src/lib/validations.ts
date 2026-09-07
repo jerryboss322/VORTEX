@@ -15,6 +15,10 @@ export const tipSchema = z.object({
   status: z.enum(["PENDING", "WON", "LOST", "CANCELLED"]).optional().default("PENDING"),
 });
 
+export const tipBatchSchema = z.object({
+  games: z.array(tipSchema).min(1).max(10),
+});
+
 export const submissionSchema = tipSchema;
 
 export const userCreateSchema = z.object({

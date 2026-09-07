@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
-import { createTipAction } from "@/lib/actions";
-import { AdminTipForm } from "@/components/admin/AdminTipForm";
+import { createTipsBatchAction } from "@/lib/actions";
+import { AdminBatchTipForm } from "@/components/admin/AdminBatchTipForm";
 import { TipRow } from "@/components/admin/TipRow";
 
 export const dynamic = "force-dynamic";
@@ -16,8 +16,8 @@ export default async function AdminTipsPage() {
       </div>
 
       <div className="mt-6">
-        <h2 className="mb-3 text-xs font-semibold tracking-widest text-zinc-500 uppercase">Publish New Official Tip</h2>
-        <AdminTipForm action={createTipAction} />
+        <h2 className="mb-3 text-xs font-semibold tracking-widest text-zinc-500 uppercase">Publish Official Tips — Single or Batch (up to 10)</h2>
+        <AdminBatchTipForm action={createTipsBatchAction} />
       </div>
 
       <div className="mt-10">

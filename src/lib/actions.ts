@@ -9,6 +9,8 @@ import { revalidatePath } from "next/cache";
 export async function createTipAction(formData: FormData): Promise<void> {
   const session = await requireAdmin();
   const userId = (session.user as any).id;
+  const u = await prisma.user.findUnique({ where: { id: userId } });
+  if (!u) throw new Error(`Admin user ${userId} not found — run prisma migrate deploy`);
   const data = tipSchema.parse({
     bookingCode: formData.get("bookingCode"),
     bookmaker: formData.get("bookmaker"),
@@ -53,6 +55,80 @@ export async function createTipAction(formData: FormData): Promise<void> {
     imageUrl,
     targetId: tip.id,
   });
+  revalidatePath("/");
+  revalidatePath("/tips");
+}
+
+export async function createTipsBatchAction(formData: FormData): Promise<void> {
+  const session = await requireAdmin();
+  const userId = (session.user as any).id;
+  const u = await prisma.user.findUnique({ where: { id: userId } });
+  if (!u) throw new Error(`Admin user ${userId} not found — run prisma migrate deploy`);
+  const count = Math.min(10, Math.max(1, Number(formData.get("count") || 0)));
+  if (!count || count < 1) throw new Error("No games in batch");
+  if (count > 10) throw new Error("Max 10 games per batch");
+
+  type Game = { bookingCode: string; bookmaker: string; odds: number | null; confidence: number | null; note: string | null; status: string; image: File };
+  const games: Game[] = [];
+  for (let i = 0; i < count; i++) {
+    const file = formData.get(`image_${i}`) as File | null;
+    if (!file || file.size === 0) throw new Error(`Game ${i + 1}: slip screenshot is required`);
+    const raw = {
+      bookingCode: formData.get(`bookingCode_${i}`),
+      bookmaker: formData.get(`bookmaker_${i}`),
+      odds: formData.get(`odds_${i}`) || null,
+      confidence: formData.get(`confidence_${i}`) || null,
+      note: formData.get(`note_${i}`) || null,
+      status: formData.get(`status_${i}`) || "PENDING",
+    };
+    const data = tipSchema.parse(raw);
+    games.push({ bookingCode: data.bookingCode, bookmaker: data.bookmaker, odds: data.odds ?? null, confidence: data.confidence ?? null, note: data.note ?? null, status: data.status ?? "PENDING", image: file });
+  }
+
+  // upload all images (concurrency 3)
+  const uploaded: { url: string; key: string }[] = [];
+  for (const g of games) {
+    const { url, key } = await uploadSlipImage(g.image);
+    uploaded.push({ url, key });
+  }
+
+  const ids: string[] = [];
+  const codes: string[] = [];
+  await prisma.$transaction(async (tx) => {
+    for (let i = 0; i < games.length; i++) {
+      const g = games[i];
+      const up = uploaded[i];
+      const tip = await tx.tip.create({
+        data: {
+          imageUrl: up.url,
+          storageKey: up.key,
+          bookingCode: g.bookingCode.toUpperCase().trim(),
+          bookmaker: g.bookmaker.trim(),
+          odds: g.odds ?? null,
+          confidence: g.confidence ?? null,
+          note: g.note || null,
+          status: (g.status as any) || "PENDING",
+          createdById: userId,
+        },
+      });
+      ids.push(tip.id);
+      codes.push(tip.bookingCode);
+      await tx.activityLog.create({ data: { userId, action: "TIP_CREATED_BATCH", targetType: "Tip", targetId: tip.id, metadata: { batchIndex: i, batchCount: games.length } as any } });
+    }
+  });
+
+  const preview = codes.slice(0, 3).join(", ") + (codes.length > 3 ? ` +${codes.length - 3} more` : "");
+  await createNotification({
+    type: "TIP_CREATED",
+    title: `Published ${ids.length} tip${ids.length > 1 ? "s" : ""} — ${preview}`,
+    body: games.map((g) => `${g.bookingCode.toUpperCase()} · ${g.bookmaker}`).join(" · ").slice(0, 200),
+    link: ids.length === 1 ? `/tips/${ids[0]}` : "/tips",
+    bookingCode: codes[0] || null,
+    bookmaker: games[0]?.bookmaker || null,
+    imageUrl: uploaded[0]?.url || null,
+    targetId: ids[0] || null,
+  });
+
   revalidatePath("/");
   revalidatePath("/tips");
 }
@@ -199,28 +275,38 @@ export const createPublicSubmissionAction = createSubmissionAction;
 export async function approveSubmissionAction(id: string): Promise<void> {
   const session = await requireAdmin();
   const reviewerId = (session.user as any).id;
+  // verify reviewer exists before FK — prevents Submission_reviewedById_fkey
+  const reviewer = await prisma.user.findUnique({ where: { id: reviewerId } });
+  if (!reviewer) throw new Error(`Reviewer not found in DB (${reviewerId}). Run: npx prisma migrate deploy && npm run seed`);
   const sub = await prisma.submission.findUnique({ where: { id } });
   if (!sub) throw new Error("Not found");
   if (sub.status !== "PENDING") throw new Error("Already reviewed");
   let newTipId: string | null = null;
-  await prisma.$transaction(async (tx) => {
-    await tx.submission.update({ where: { id }, data: { status: "APPROVED", reviewedById: reviewerId, reviewedAt: new Date() } });
-    const tip = await tx.tip.create({
-      data: {
-        imageUrl: sub.imageUrl,
-        storageKey: sub.storageKey,
-        bookingCode: sub.bookingCode,
-        bookmaker: sub.bookmaker,
-        odds: sub.odds,
-        confidence: sub.confidence,
-        note: sub.note,
-        status: "PENDING",
-        createdById: sub.submittedById ?? reviewerId,
-      },
+  try {
+    await prisma.$transaction(async (tx) => {
+      await tx.submission.update({ where: { id }, data: { status: "APPROVED", reviewedById: reviewerId, reviewedAt: new Date() } });
+      const tip = await tx.tip.create({
+        data: {
+          imageUrl: sub.imageUrl,
+          storageKey: sub.storageKey,
+          bookingCode: sub.bookingCode,
+          bookmaker: sub.bookmaker,
+          odds: sub.odds,
+          confidence: sub.confidence,
+          note: sub.note,
+          status: "PENDING",
+          createdById: sub.submittedById ?? reviewerId,
+        },
+      });
+      newTipId = tip.id;
+      await tx.activityLog.create({ data: { userId: reviewerId, action: "TIP_APPROVED", targetType: "Submission", targetId: id } });
     });
-    newTipId = tip.id;
-    await tx.activityLog.create({ data: { userId: reviewerId, action: "TIP_APPROVED", targetType: "Submission", targetId: id } });
-  });
+  } catch (e: any) {
+    if (e?.code === "P2003" || String(e?.message || "").includes("Foreign key")) {
+      throw new Error(`FK violated — reviewer ${reviewerId} missing. ${e.message}`);
+    }
+    throw e;
+  }
   await createNotification({
     type: "SUBMISSION_APPROVED",
     title: `Submission approved — ${sub.bookingCode}`,
@@ -239,8 +325,15 @@ export async function approveSubmissionAction(id: string): Promise<void> {
 export async function rejectSubmissionAction(id: string): Promise<void> {
   const session = await requireAdmin();
   const reviewerId = (session.user as any).id;
+  const reviewer = await prisma.user.findUnique({ where: { id: reviewerId } });
+  if (!reviewer) throw new Error(`Reviewer not found in DB (${reviewerId})`);
   const sub = await prisma.submission.findUnique({ where: { id } });
-  await prisma.submission.update({ where: { id }, data: { status: "REJECTED", reviewedById: reviewerId, reviewedAt: new Date() } });
+  try {
+    await prisma.submission.update({ where: { id }, data: { status: "REJECTED", reviewedById: reviewerId, reviewedAt: new Date() } });
+  } catch (e: any) {
+    if (e?.code === "P2003") throw new Error(`FK violated — reviewer ${reviewerId} missing. ${e.message}`);
+    throw e;
+  }
   if (sub) {
     await createNotification({
       type: "SUBMISSION_REJECTED",
