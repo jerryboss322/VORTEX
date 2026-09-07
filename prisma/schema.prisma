@@ -102,3 +102,31 @@ model ActivityLog {
   @@index([userId])
   @@index([createdAt])
 }
+
+enum NotificationType {
+  SUBMISSION_NEW
+  SUBMISSION_APPROVED
+  SUBMISSION_REJECTED
+  TIP_CREATED
+  TIP_WON
+  TIP_LOST
+  TIP_UPDATED
+}
+
+model Notification {
+  id          String           @id @default(cuid())
+  type        NotificationType
+  title       String
+  body        String?          @db.Text
+  link        String?
+  bookingCode String?
+  bookmaker   String?
+  imageUrl    String?
+  targetId    String?
+  read        Boolean          @default(false)
+  createdAt   DateTime         @default(now())
+
+  @@index([read])
+  @@index([createdAt])
+  @@index([type])
+}

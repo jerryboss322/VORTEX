@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { tipSchema } from "@/lib/validations";
 import { requireAdmin } from "@/lib/permissions";
 import { uploadSlipImage, deleteSlipImage } from "@/lib/storage";
+import { createNotification } from "@/lib/notifications";
 import { revalidatePath } from "next/cache";
 
 export async function createTipAction(formData: FormData): Promise<void> {
@@ -42,6 +43,16 @@ export async function createTipAction(formData: FormData): Promise<void> {
     },
   });
   await prisma.activityLog.create({ data: { userId, action: "TIP_CREATED", targetType: "Tip", targetId: tip.id } });
+  await createNotification({
+    type: "TIP_CREATED",
+    title: `New tip published — ${data.bookingCode.toUpperCase()}`,
+    body: `${data.bookmaker} · ${data.odds ? `Odds ${data.odds}` : "Odds —"}${data.note ? ` · ${data.note.slice(0, 80)}` : ""}`,
+    link: `/tips/${tip.id}`,
+    bookingCode: data.bookingCode.toUpperCase().trim(),
+    bookmaker: data.bookmaker.trim(),
+    imageUrl,
+    targetId: tip.id,
+  });
   revalidatePath("/");
   revalidatePath("/tips");
 }
@@ -73,6 +84,15 @@ export async function updateTipAction(id: string, formData: FormData): Promise<v
     if (existing?.storageKey) await deleteSlipImage(existing.storageKey);
   }
   await prisma.tip.update({ where: { id }, data: update });
+  await createNotification({
+    type: "TIP_UPDATED",
+    title: `Tip updated — ${data.bookingCode.toUpperCase()}`,
+    body: `${data.bookmaker} · ${data.status}`,
+    link: `/tips/${id}`,
+    bookingCode: data.bookingCode.toUpperCase().trim(),
+    bookmaker: data.bookmaker.trim(),
+    targetId: id,
+  });
   revalidatePath("/");
   revalidatePath("/tips");
   revalidatePath(`/tips/${id}`);
@@ -89,7 +109,30 @@ export async function deleteTipAction(id: string): Promise<void> {
 
 export async function updateTipStatusAction(id: string, status: string): Promise<void> {
   await requireAdmin();
-  await prisma.tip.update({ where: { id }, data: { status: status as any } });
+  const tip = await prisma.tip.update({ where: { id }, data: { status: status as any } });
+  const t = status as string;
+  if (t === "WON" || t === "LOST") {
+    await createNotification({
+      type: t === "WON" ? "TIP_WON" : "TIP_LOST",
+      title: `Tip ${t.toLowerCase()} — ${tip.bookingCode}`,
+      body: `${tip.bookmaker} · ${tip.odds ? `Odds ${tip.odds}` : ""}`.trim(),
+      link: `/tips/${id}`,
+      bookingCode: tip.bookingCode,
+      bookmaker: tip.bookmaker,
+      imageUrl: tip.imageUrl,
+      targetId: id,
+    });
+  } else {
+    await createNotification({
+      type: "TIP_UPDATED",
+      title: `Tip ${t.toLowerCase()} — ${tip.bookingCode}`,
+      body: `${tip.bookmaker}`,
+      link: `/tips/${id}`,
+      bookingCode: tip.bookingCode,
+      bookmaker: tip.bookmaker,
+      targetId: id,
+    });
+  }
   revalidatePath("/");
   revalidatePath("/results");
   revalidatePath(`/tips/${id}`);
@@ -123,7 +166,7 @@ export async function createSubmissionAction(formData: FormData): Promise<void> 
   const file = formData.get("image") as File | null;
   if (!file || file.size === 0) throw new Error("Slip screenshot is required");
   const { url, key } = await uploadSlipImage(file);
-  await prisma.submission.create({
+  const sub = await prisma.submission.create({
     data: {
       imageUrl: url,
       storageKey: key,
@@ -138,6 +181,16 @@ export async function createSubmissionAction(formData: FormData): Promise<void> 
       source: "member",
     },
   });
+  await createNotification({
+    type: "SUBMISSION_NEW",
+    title: `New submission — ${data.bookingCode.toUpperCase()}`,
+    body: `${guestName ? `${guestName} · ` : ""}${data.bookmaker} · ${data.odds ? `Odds ${data.odds} · ` : ""}${data.note ? data.note.slice(0, 80) : "Awaiting review"}`,
+    link: "/admin/submissions",
+    bookingCode: data.bookingCode.toUpperCase().trim(),
+    bookmaker: data.bookmaker.trim(),
+    imageUrl: url,
+    targetId: sub.id,
+  });
   revalidatePath("/admin/submissions");
 }
 
@@ -149,9 +202,10 @@ export async function approveSubmissionAction(id: string): Promise<void> {
   const sub = await prisma.submission.findUnique({ where: { id } });
   if (!sub) throw new Error("Not found");
   if (sub.status !== "PENDING") throw new Error("Already reviewed");
+  let newTipId: string | null = null;
   await prisma.$transaction(async (tx) => {
     await tx.submission.update({ where: { id }, data: { status: "APPROVED", reviewedById: reviewerId, reviewedAt: new Date() } });
-    await tx.tip.create({
+    const tip = await tx.tip.create({
       data: {
         imageUrl: sub.imageUrl,
         storageKey: sub.storageKey,
@@ -164,7 +218,18 @@ export async function approveSubmissionAction(id: string): Promise<void> {
         createdById: sub.submittedById ?? reviewerId,
       },
     });
+    newTipId = tip.id;
     await tx.activityLog.create({ data: { userId: reviewerId, action: "TIP_APPROVED", targetType: "Submission", targetId: id } });
+  });
+  await createNotification({
+    type: "SUBMISSION_APPROVED",
+    title: `Submission approved — ${sub.bookingCode}`,
+    body: `${sub.bookmaker} · published as tip${sub.guestName ? ` · by ${sub.guestName}` : ""}`,
+    link: newTipId ? `/tips/${newTipId}` : "/tips",
+    bookingCode: sub.bookingCode,
+    bookmaker: sub.bookmaker,
+    imageUrl: sub.imageUrl,
+    targetId: id,
   });
   revalidatePath("/");
   revalidatePath("/tips");
@@ -174,7 +239,20 @@ export async function approveSubmissionAction(id: string): Promise<void> {
 export async function rejectSubmissionAction(id: string): Promise<void> {
   const session = await requireAdmin();
   const reviewerId = (session.user as any).id;
+  const sub = await prisma.submission.findUnique({ where: { id } });
   await prisma.submission.update({ where: { id }, data: { status: "REJECTED", reviewedById: reviewerId, reviewedAt: new Date() } });
+  if (sub) {
+    await createNotification({
+      type: "SUBMISSION_REJECTED",
+      title: `Submission rejected — ${sub.bookingCode}`,
+      body: `${sub.bookmaker}${sub.guestName ? ` · by ${sub.guestName}` : ""} · not published`,
+      link: "/admin/submissions",
+      bookingCode: sub.bookingCode,
+      bookmaker: sub.bookmaker,
+      imageUrl: sub.imageUrl,
+      targetId: id,
+    });
+  }
   revalidatePath("/admin/submissions");
 }
 

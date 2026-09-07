@@ -19,10 +19,10 @@ export default function AdminPage() {
           <div className="text-sm font-semibold">Submissions</div>
           <div className="text-xs text-zinc-500 mt-1">Review guest tips → Approve/Reject</div>
         </Link>
-        <Link href="/tips" className="rounded-xl border border-[#262626] bg-[#141414] p-5 hover:bg-zinc-900">
+        <Link href="/admin/notifications" className="rounded-xl border border-[#262626] bg-[#141414] p-5 hover:bg-zinc-900">
           <div className="h-2 w-8 rounded bg-violet-400/70 mb-3" />
-          <div className="text-sm font-semibold">View Site</div>
-          <div className="text-xs text-zinc-500 mt-1">See what members see</div>
+          <div className="text-sm font-semibold">Notifications</div>
+          <div className="text-xs text-zinc-500 mt-1">History of submits, approves, publishes</div>
         </Link>
       </div>
 

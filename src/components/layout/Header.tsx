@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { isAdminPinOk, clearPinCookie } from "@/lib/adminPin";
 import { MobileToggle } from "./MobileToggle";
+import { NotificationBell } from "@/components/notifications/NotificationBell";
 
 export async function Header() {
   const isAdmin = await isAdminPinOk();
@@ -41,30 +42,36 @@ export async function Header() {
               <Link href="/admin/submissions" className="text-zinc-400 hover:text-white">
                 Submissions
               </Link>
+              <NotificationBell />
               <form action={logout}>
                 <button className="rounded-md bg-white px-3 py-1.5 text-xs font-semibold text-black hover:bg-zinc-200">Logout</button>
               </form>
             </>
-          ) : null}
+          ) : (
+            <NotificationBell />
+          )}
         </nav>
 
-        <MobileToggle>
-          <nav className="flex flex-col px-4 py-3 gap-3 text-sm">
-            <Link href="/tips" className="text-zinc-300">Tips</Link>
-            <Link href="/results" className="text-zinc-300">Results</Link>
-            <Link href="/submit" className="text-zinc-300">Submit Tip</Link>
-            {isAdmin ? (
-              <>
-                <Link href="/admin" className="text-zinc-300">Dashboard</Link>
-                <Link href="/admin/tips" className="text-zinc-300">Manage Tips</Link>
-                <Link href="/admin/submissions" className="text-zinc-300">Submissions</Link>
-                <form action={logout}>
-                  <button className="w-full rounded-md bg-white px-3 py-2 text-sm font-semibold text-black">Logout</button>
-                </form>
-              </>
-            ) : null}
-          </nav>
-        </MobileToggle>
+        <div className="flex items-center gap-3 sm:hidden">
+          <NotificationBell />
+          <MobileToggle>
+            <nav className="flex flex-col px-4 py-3 gap-3 text-sm">
+              <Link href="/tips" className="text-zinc-300">Tips</Link>
+              <Link href="/results" className="text-zinc-300">Results</Link>
+              <Link href="/submit" className="text-zinc-300">Submit Tip</Link>
+              {isAdmin ? (
+                <>
+                  <Link href="/admin" className="text-zinc-300">Dashboard</Link>
+                  <Link href="/admin/tips" className="text-zinc-300">Manage Tips</Link>
+                  <Link href="/admin/submissions" className="text-zinc-300">Submissions</Link>
+                  <form action={logout}>
+                    <button className="w-full rounded-md bg-white px-3 py-2 text-sm font-semibold text-black">Logout</button>
+                  </form>
+                </>
+              ) : null}
+            </nav>
+          </MobileToggle>
+        </div>
       </div>
     </header>
   );
