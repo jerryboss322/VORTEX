@@ -1,45 +1,59 @@
 @import "tailwindcss";
 
 :root {
-  --background: #0a0a0a;
-  --foreground: #ededed;
-  --surface: #141414;
-  --surface-hover: #1a1a1a;
-  --border: #262626;
-  --muted: #a1a1aa;
-  --muted-strong: #71717a;
-  --accent: #e5e5e5;
-  --success: #22c55e;
-  --warning: #eab308;
-  --danger: #ef4444;
-  --group-tips: #22d3ee;
-  --group-results: #a78bfa;
-  --group-submit: #facc15;
+  --th-bg: #0e1013;
+  --th-surface: #171a1f;
+  --th-border: rgba(255, 255, 255, 0.08);
+  --th-chip: rgba(255, 255, 255, 0.05);
+  --th-text: #edeae3;
+  --th-sub: #9c978c;
+  --th-gold: #c9a15a;
+  --th-green: #7bb894;
+  --th-red: #c97d74;
+  /* legacy aliases for migrated files */
+  --background: var(--th-bg);
+  --foreground: var(--th-text);
+  --surface: var(--th-surface);
+  --border: var(--th-border);
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --color-surface: var(--surface);
-  --color-border: var(--border);
-  --font-sans: var(--font-geist-sans);
+  --color-background: var(--th-bg);
+  --color-foreground: var(--th-text);
+  --color-surface: var(--th-surface);
+  --color-border: var(--th-border);
+  --font-sans: var(--font-inter);
+  --font-serif: var(--font-fraunces);
   --font-mono: var(--font-geist-mono);
+  --color-th-bg: var(--th-bg);
+  --color-th-surface: var(--th-surface);
+  --color-th-text: var(--th-text);
+  --color-th-sub: var(--th-sub);
+  --color-th-gold: var(--th-gold);
+  --color-th-green: var(--th-green);
+  --color-th-red: var(--th-red);
 }
 
 * {
-  border-color: var(--border);
+  border-color: var(--th-border);
+}
+
+html {
+  scrollbar-gutter: stable;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Inter, system-ui, sans-serif;
+  background: var(--th-bg);
+  color: var(--th-text);
+  font-family: var(--font-inter), Inter, system-ui, sans-serif;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
 }
 
-/* focus */
+/* focus - gold hairline */
 :focus-visible {
-  outline: 2px solid #e5e5e5;
+  outline: 1.5px solid var(--th-gold);
   outline-offset: 2px;
 }
 
@@ -49,9 +63,14 @@ body {
   height: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2a2a2a;
+  background: #2a2e35;
   border-radius: 999px;
 }
 ::-webkit-scrollbar-track {
   background: transparent;
+}
+
+/* Fraunces headings helper */
+.font-display {
+  font-family: var(--font-fraunces), serif;
 }

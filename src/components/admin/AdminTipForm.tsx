@@ -6,7 +6,7 @@ import { ImageUploader } from "@/components/ui/ImageUploader";
 function PublishButton({ isEdit }: { isEdit?: boolean }) {
   const { pending } = useFormStatus();
   return (
-    <button disabled={pending} className="rounded-lg bg-white px-6 py-2.5 text-sm font-bold text-black hover:bg-zinc-200 disabled:opacity-50">
+    <button disabled={pending} className="rounded-full bg-[var(--th-text)] px-6 py-2.5 text-[12px] font-[600] tracking-[0.02em] text-[#0E1013] hover:bg-[#ddd8cf] disabled:opacity-50">
       {pending ? (isEdit ? "Saving…" : "Publishing…") : isEdit ? "Save Changes" : "Publish Tip"}
     </button>
   );
@@ -65,13 +65,13 @@ export function AdminTipForm({
   }
 
   return (
-    <form id="admin-tip-form" action={handle} className="space-y-4 rounded-xl border border-[#262626] bg-[#141414] p-5">
-      {error && <div className="rounded-md bg-red-500/10 border border-red-500/20 px-3 py-2 text-sm text-red-400" role="alert">{error}</div>}
-      {success && <div className="rounded-md bg-emerald-500/10 border border-emerald-500/20 px-3 py-2 text-sm text-emerald-400">{isEdit ? "Tip updated." : "Tip published — visible on homepage."}</div>}
+    <form id="admin-tip-form" action={handle} className="space-y-4 rounded-[14px] border border-[var(--th-border)] bg-[var(--th-bg)]/40 p-5">
+      {error && <div className="rounded-[12px] border border-[var(--th-red)]/20 bg-[var(--th-red)]/10 px-3 py-2 text-[13px] text-[var(--th-red)]" role="alert">{error}</div>}
+      {success && <div className="rounded-[12px] border border-[var(--th-green)]/20 bg-[var(--th-green)]/10 px-3 py-2 text-[13px] text-[var(--th-green)]">{isEdit ? "Tip updated." : "Tip published — visible on homepage."}</div>}
 
       <div className="grid gap-5 lg:grid-cols-[1.1fr_1.9fr]">
         <div>
-          <label className="text-[11px] font-semibold tracking-widest text-zinc-400 uppercase">Slip {isEdit ? "(replace to update)" : "* required"}</label>
+          <label className="text-[11px] font-[400] tracking-[0.08em] uppercase text-[var(--th-sub)]">Slip {isEdit ? "(replace to update)" : "* required"}</label>
           <div className="mt-2">
             <ImageUploader name="image" required={!isEdit} variant="compact" initialUrl={defaults?.imageUrl || null} />
           </div>
@@ -80,43 +80,43 @@ export function AdminTipForm({
         <div className="space-y-4">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <div>
-              <label htmlFor="abooking" className="text-xs font-medium text-zinc-300">Booking Code *</label>
-              <input id="abooking" name="bookingCode" defaultValue={defaults?.bookingCode || ""} required placeholder="ABC123XYZ" className="mt-1 w-full rounded-lg border border-[#262626] bg-[#0a0a0a] px-3 py-2.5 text-sm font-mono uppercase outline-none focus:border-zinc-500" />
+              <label htmlFor="abooking" className="text-[12px] font-[400] text-[var(--th-sub)]">Booking Code *</label>
+              <input id="abooking" name="bookingCode" defaultValue={defaults?.bookingCode || ""} required placeholder="ABC123XYZ" className="mt-1.5 w-full rounded-full border border-[var(--th-border)] bg-[var(--th-chip)] px-4 py-2.5 text-[13px] font-mono uppercase placeholder:text-[var(--th-sub)] outline-none focus:border-[var(--th-text)]/20" />
             </div>
             <div>
-              <label htmlFor="abookmaker" className="text-xs font-medium text-zinc-300">Bookmaker *</label>
-              <input id="abookmaker" name="bookmaker" defaultValue={defaults?.bookmaker || ""} required list="bookmakers-admin" placeholder="Bet9ja" className="mt-1 w-full rounded-lg border border-[#262626] bg-[#0a0a0a] px-3 py-2.5 text-sm outline-none" />
+              <label htmlFor="abookmaker" className="text-[12px] font-[400] text-[var(--th-sub)]">Bookmaker *</label>
+              <input id="abookmaker" name="bookmaker" defaultValue={defaults?.bookmaker || ""} required list="bookmakers-admin" placeholder="Bet9ja" className="mt-1.5 w-full rounded-full border border-[var(--th-border)] bg-[var(--th-chip)] px-4 py-2.5 text-[13px] outline-none focus:border-[var(--th-text)]/20" />
             </div>
           </div>
 
           <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
             <div>
-              <label htmlFor="aodds" className="text-xs font-medium text-zinc-300">Odds</label>
-              <input id="aodds" name="odds" type="number" step="0.01" min="1" defaultValue={defaults?.odds ?? ""} placeholder="18.40" className="mt-1 w-full rounded-lg border border-[#262626] bg-[#0a0a0a] px-3 py-2.5 text-sm outline-none" />
+              <label htmlFor="aodds" className="text-[12px] font-[400] text-[var(--th-sub)]">Odds</label>
+              <input id="aodds" name="odds" type="number" step="0.01" min="1" defaultValue={defaults?.odds ?? ""} placeholder="18.40" className="mt-1.5 w-full rounded-full border border-[var(--th-border)] bg-[var(--th-chip)] px-4 py-2.5 text-[13px] outline-none" />
             </div>
             <div>
-              <label htmlFor="aconf" className="text-xs font-medium text-zinc-300">Confidence %</label>
-              <input id="aconf" name="confidence" type="number" min="0" max="100" defaultValue={defaults?.confidence ?? ""} placeholder="87" className="mt-1 w-full rounded-lg border border-[#262626] bg-[#0a0a0a] px-3 py-2.5 text-sm outline-none" />
+              <label htmlFor="aconf" className="text-[12px] font-[400] text-[var(--th-sub)]">Confidence %</label>
+              <input id="aconf" name="confidence" type="number" min="0" max="100" defaultValue={defaults?.confidence ?? ""} placeholder="87" className="mt-1.5 w-full rounded-full border border-[var(--th-border)] bg-[var(--th-chip)] px-4 py-2.5 text-[13px] outline-none" />
             </div>
             <div className="col-span-2 sm:col-span-1">
-              <label htmlFor="astatus" className="text-xs font-medium text-zinc-300">Status</label>
-              <select id="astatus" name="status" defaultValue={defaults?.status || "PENDING"} className="mt-1 w-full rounded-lg border border-[#262626] bg-[#0a0a0a] px-3 py-2.5 text-sm outline-none">
-                <option value="PENDING">PENDING</option>
-                <option value="WON">WON</option>
-                <option value="LOST">LOST</option>
-                <option value="CANCELLED">CANCELLED</option>
+              <label htmlFor="astatus" className="text-[12px] font-[400] text-[var(--th-sub)]">Status</label>
+              <select id="astatus" name="status" defaultValue={defaults?.status || "PENDING"} className="mt-1.5 w-full rounded-full border border-[var(--th-border)] bg-[var(--th-chip)] px-4 py-2.5 text-[13px] outline-none">
+                <option value="PENDING">Pending</option>
+                <option value="WON">Won</option>
+                <option value="LOST">Lost</option>
+                <option value="CANCELLED">Cancelled</option>
               </select>
             </div>
           </div>
 
           <div>
-            <label htmlFor="anote" className="text-xs font-medium text-zinc-300">Note / Analysis <span className="text-zinc-500 font-normal">— optional, 500 max, private unless you publish</span></label>
-            <textarea id="anote" name="note" rows={2} maxLength={500} defaultValue={defaults?.note || ""} placeholder="Optional admin note…" className="mt-1 w-full rounded-lg border border-[#262626] bg-[#0a0a0a] px-3 py-2.5 text-sm outline-none resize-none" />
+            <label htmlFor="anote" className="text-[12px] font-[400] text-[var(--th-sub)]">Note / Analysis <span className="opacity-60">— optional, 500 max</span></label>
+            <textarea id="anote" name="note" rows={2} maxLength={500} defaultValue={defaults?.note || ""} placeholder="Optional admin note…" className="mt-1.5 w-full rounded-[14px] border border-[var(--th-border)] bg-[var(--th-chip)] px-4 py-2.5 text-[13px] outline-none resize-none" />
           </div>
 
           <div className="flex items-center gap-3">
             <PublishButton isEdit={isEdit} />
-            <span className="text-xs text-zinc-500">Image → R2 · Code → uppercase · Instant on homepage</span>
+            <span className="text-[12px] text-[var(--th-sub)]">Image → R2 · Code → uppercase · Instant on homepage</span>
           </div>
         </div>
       </div>

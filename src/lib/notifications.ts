@@ -53,23 +53,24 @@ export async function clearAll() {
 }
 
 export function notificationMeta(type: string) {
+  // design.md 5.7 — outline style, low-opacity chips; muted semantic tints only
   switch (type) {
     case "SUBMISSION_NEW":
-      return { icon: "📥", color: "bg-amber-400", label: "New submission", dot: "bg-amber-400" };
+      return { icon: "↑", color: "bg-[var(--th-chip)]", label: "New submission", dot: "bg-[var(--th-sub)]" };
     case "SUBMISSION_APPROVED":
-      return { icon: "✅", color: "bg-emerald-500", label: "Approved", dot: "bg-emerald-500" };
+      return { icon: "✓", color: "bg-[var(--th-green)]/15", label: "Approved", dot: "bg-[var(--th-green)]" };
     case "SUBMISSION_REJECTED":
-      return { icon: "❌", color: "bg-red-500", label: "Rejected", dot: "bg-red-500" };
+      return { icon: "×", color: "bg-[var(--th-red)]/15", label: "Rejected", dot: "bg-[var(--th-red)]" };
     case "TIP_CREATED":
-      return { icon: "📌", color: "bg-cyan-400", label: "Tip published", dot: "bg-cyan-400" };
+      return { icon: "◯", color: "bg-[var(--th-gold)]/15", label: "Tip published", dot: "bg-[var(--th-gold)]" };
     case "TIP_WON":
-      return { icon: "🏆", color: "bg-emerald-500", label: "Won", dot: "bg-emerald-500" };
+      return { icon: "✓", color: "bg-[var(--th-green)]/15", label: "Won", dot: "bg-[var(--th-green)]" };
     case "TIP_LOST":
-      return { icon: "💔", color: "bg-red-500", label: "Lost", dot: "bg-red-500" };
+      return { icon: "×", color: "bg-[var(--th-red)]/15", label: "Lost", dot: "bg-[var(--th-red)]" };
     case "TIP_UPDATED":
-      return { icon: "✏️", color: "bg-zinc-400", label: "Updated", dot: "bg-zinc-400" };
+      return { icon: "✎", color: "bg-[var(--th-chip)]", label: "Updated", dot: "bg-[var(--th-sub)]" };
     default:
-      return { icon: "🔔", color: "bg-violet-500", label: type, dot: "bg-violet-500" };
+      return { icon: "○", color: "bg-[var(--th-chip)]", label: type, dot: "bg-[var(--th-gold)]" };
   }
 }
 

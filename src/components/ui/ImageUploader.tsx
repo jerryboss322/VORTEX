@@ -87,30 +87,30 @@ export function ImageUploader({ name = "image", required, initialUrl, variant = 
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
         onClick={() => inputRef.current?.click()}
-        className={`relative flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed bg-[#0a0a0a] p-4 text-center transition-colors ${height} ${dragOver ? "border-cyan-400 bg-cyan-500/5" : "border-[#262626] hover:border-zinc-600"} ${error ? "border-red-500/50" : ""}`}
+        className={`relative flex cursor-pointer flex-col items-center justify-center rounded-[14px] border border-dashed bg-[var(--th-chip)] p-4 text-center transition-colors ${height} ${dragOver ? "border-[var(--th-gold)] bg-[var(--th-gold)]/5" : "border-[var(--th-border)] hover:border-[var(--th-text)]/20"} ${error ? "border-[var(--th-red)]/50" : ""}`}
       >
         {preview ? (
           <>
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img src={preview} alt="Preview" className="max-h-40 w-auto rounded object-contain" />
-            {file && <span className="mt-2 text-xs text-zinc-400">{file.name} · {(file.size / 1024 / 1024).toFixed(2)} MB</span>}
-            {!file && initialUrl && <span className="mt-2 text-xs text-zinc-500">Current image — click or drop to replace</span>}
+            {file && <span className="mt-2 text-[12px] text-[var(--th-sub)]">{file.name} · {(file.size / 1024 / 1024).toFixed(2)} MB</span>}
+            {!file && initialUrl && <span className="mt-2 text-[12px] text-[var(--th-sub)]">Current image — click or drop to replace</span>}
           </>
         ) : (
           <>
-            <span className="text-sm font-medium text-zinc-300">Drop slip here or click to browse</span>
-            <span className="mt-1 text-xs text-zinc-500">JPEG, PNG, WEBP · Max 10MB · Screenshot must be readable</span>
+            <span className="text-[13px] font-[500] text-[var(--th-text)]">Drop slip here or click to browse</span>
+            <span className="mt-1 text-[12px] text-[var(--th-sub)]">JPEG, PNG, WEBP · Max 10MB</span>
           </>
         )}
         <input ref={inputRef} name={name} type="file" accept="image/jpeg,image/png,image/webp" required={required && !preview} className="hidden" onChange={(e) => set(e.target.files?.[0] || null)} />
       </div>
       {preview && (
-        <button type="button" onClick={() => set(null)} className="mt-2 text-xs text-zinc-400 hover:text-white underline">
+        <button type="button" onClick={() => set(null)} className="mt-2 text-[12px] text-[var(--th-sub)] hover:text-[var(--th-text)] underline">
           {file ? "Remove selection" : "Clear"}
         </button>
       )}
-      {error && <p className="mt-2 text-xs text-red-400" role="alert">{error}</p>}
-      {!error && <p className="mt-2 text-[11px] text-zinc-500">Tip: crop tightly, keep text sharp — avoid aggressive compression.</p>}
+      {error && <p className="mt-2 text-[12px] text-[var(--th-red)]" role="alert">{error}</p>}
+      {!error && <p className="mt-2 text-[11px] text-[var(--th-sub)]">Tip: crop tightly, keep text sharp.</p>}
     </div>
   );
 }

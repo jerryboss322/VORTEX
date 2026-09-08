@@ -18,12 +18,16 @@ export function CopyButton({ code }: { code: string }) {
     <div className="flex items-center gap-2">
       <button
         onClick={handle}
-        className={`rounded-md px-3 py-1.5 text-xs font-semibold transition-colors ${copied ? "bg-emerald-600 text-white" : "bg-white text-black hover:bg-zinc-200"}`}
+        className={`rounded-full border px-3.5 py-1.5 text-[12px] font-[500] tracking-[0.02em] transition-colors ${
+          copied
+            ? "border-[var(--th-green)] bg-[var(--th-green)] text-[#0E1013]"
+            : "border-[var(--th-border)] bg-transparent text-[var(--th-text)] hover:border-[var(--th-text)]/20 hover:bg-[var(--th-chip)]"
+        }`}
         aria-label="Copy booking code"
       >
         {copied ? "Copied" : "Copy"}
       </button>
-      {error && <span className="text-xs text-red-400">Unable to copy. Please copy manually.</span>}
+      {error && <span className="text-[12px] text-[var(--th-red)]">Unable to copy.</span>}
     </div>
   );
 }

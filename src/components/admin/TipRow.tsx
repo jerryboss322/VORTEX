@@ -1,66 +1,60 @@
 "use client";
-import { StatusBadge } from "@/components/ui/StatusBadge";
 import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
-import { deleteTipAction, updateTipStatusAction } from "@/lib/actions";
+import { StatusControl } from "./StatusControl";
+import { deleteTipAction } from "@/lib/actions";
 import Link from "next/link";
-import { useTransition } from "react";
 
 export function TipRow({ tip }: { tip: any }) {
-  const [pending, start] = useTransition();
-
   return (
-    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 rounded-xl border border-[#262626] bg-[#141414] p-3">
-      <div className="flex items-center gap-3">
+    <div className="flex flex-col gap-3 rounded-none border-b border-[var(--th-border)] bg-transparent px-4 py-3.5 last:border-b-0 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+      <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={tip.imageUrl} alt={tip.bookingCode} className="h-12 w-20 object-cover rounded bg-zinc-900 border border-[#262626]" />
-        <div>
-          <div className="font-mono text-sm font-bold">{tip.bookingCode}</div>
-          <div className="text-xs text-zinc-500">{tip.bookmaker} · Odds {tip.odds ?? "—"} {tip.confidence != null ? `· ${tip.confidence}%` : ""}</div>
+        <img src={tip.imageUrl} alt={tip.bookingCode} className="h-10 w-16 object-cover rounded-[8px] bg-[#0E1013] border border-[var(--th-border)] shrink-0" />
+        <div className="min-w-0">
+          <div className="font-mono text-[13px] font-[500] tracking-[0.04em] text-[var(--th-text)] truncate">{tip.bookingCode}</div>
+          <div className="text-[12px] text-[var(--th-sub)] truncate">
+            {tip.bookmaker} · {tip.odds != null ? tip.odds : "—"} {tip.confidence != null ? `· ${tip.confidence}%` : ""}
+          </div>
         </div>
-        <StatusBadge status={tip.status} />
       </div>
-      <div className="flex items-center gap-2">
-        <Link href={`/admin/tips/${tip.id}/edit`} className="rounded-lg border border-[#262626] bg-[#0a0a0a] px-3 py-1.5 text-xs font-medium hover:bg-zinc-900">
-          Edit odds
+      <div className="flex items-center gap-2 shrink-0 flex-wrap">
+        <StatusControl id={tip.id} status={tip.status} />
+        <Link
+          href={`/admin/tips/${tip.id}/edit`}
+          className="rounded-full border border-[var(--th-border)] bg-transparent px-3 py-1.5 text-[12px] font-[500] text-[var(--th-sub)] hover:text-[var(--th-text)] hover:border-[var(--th-text)]/15"
+        >
+          Edit
         </Link>
         <ConfirmDialog
           title="Delete tip?"
-          description={`This will permanently delete ${tip.bookingCode} and its R2 image. This cannot be undone.`}
+          description={`This will permanently delete ${tip.bookingCode} and its image. This cannot be undone.`}
           confirmLabel="Delete"
           onConfirm={async () => {
             try {
               await deleteTipAction(tip.id);
             } catch (e: any) {
-              alert(e?.message || "Failed to delete. Please login again.");
+              alert(e?.message || "Failed to delete.");
             }
           }}
         >
-          <button className="rounded-lg bg-red-600 px-3 py-1.5 text-xs font-semibold text-white hover:bg-red-700">Delete</button>
-        </ConfirmDialog>
-        <form
-          action={(fd: FormData) => {
-            const s = fd.get("status") as string;
-            start(async () => {
-              try {
-                await updateTipStatusAction(tip.id, s);
-              } catch (e: any) {
-                alert(e?.message || "Failed to update status. Please login again.");
-              }
-            });
-          }}
-          className="flex items-center gap-1"
-        >
-          <select name="status" defaultValue={tip.status} className="rounded-lg border border-[#262626] bg-[#0a0a0a] px-2 py-1.5 text-xs outline-none">
-            <option value="PENDING">PENDING</option>
-            <option value="WON">WON</option>
-            <option value="LOST">LOST</option>
-            <option value="CANCELLED">CANCELLED</option>
-          </select>
-          <button disabled={pending} className="rounded-lg bg-white px-3 py-1.5 text-xs font-bold text-black disabled:opacity-50">
-            {pending ? "…" : "Set"}
+          <button className="rounded-full border border-[var(--th-red)]/30 bg-transparent px-3 py-1.5 text-[12px] font-[500] text-[var(--th-red)] hover:bg-[var(--th-red)]/10">
+            Delete
           </button>
-        </form>
+        </ConfirmDialog>
       </div>
+    </div>
+  );
+}
+
+export function TipTableHeader() {
+  return (
+    <div className="hidden sm:grid grid-cols-[1fr_auto] gap-3 border-b border-[var(--th-border)] bg-[var(--th-chip)] px-5 py-2.5 text-[11px] font-[400] tracking-[0.08em] uppercase text-[var(--th-sub)]">
+      <div className="grid grid-cols-[64px_1fr_90px] gap-3 items-center">
+        <span>Preview</span>
+        <span>Code · Bookmaker</span>
+        <span>Odds</span>
+      </div>
+      <span className="text-right pr-[2px]">Status · Actions</span>
     </div>
   );
 }

@@ -15,7 +15,7 @@ export function Toaster() {
     <Ctx.Provider value={{ toast }}>
       <div className="fixed bottom-4 left-1/2 z-50 -translate-x-1/2 flex flex-col gap-2">
         {toasts.map((t) => (
-          <div key={t.id} className="rounded-md bg-white px-4 py-2 text-sm font-medium text-black shadow-lg border">
+          <div key={t.id} className="rounded-full border border-[var(--th-border)] bg-[var(--th-surface)] px-4 py-2.5 text-[13px] font-[500] text-[var(--th-text)]">
             {t.message}
           </div>
         ))}
@@ -31,6 +31,5 @@ export function useToast() {
 }
 
 export function showToast(msg: string) {
-  // fallback for server actions via custom event
   if (typeof window !== "undefined") window.dispatchEvent(new CustomEvent("tipshub-toast", { detail: msg }));
 }

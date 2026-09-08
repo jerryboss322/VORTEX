@@ -8,12 +8,14 @@ export function ConfirmDialog({ title, description, confirmLabel = "Delete", onC
     <>
       <span onClick={() => setOpen(true)}>{children}</span>
       {open && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4" onClick={() => setOpen(false)}>
-          <div className="w-full max-w-sm rounded-lg border border-[#262626] bg-[#141414] p-6" onClick={(e) => e.stopPropagation()}>
-            <h3 className="text-sm font-semibold">{title}</h3>
-            {description && <p className="mt-1 text-sm text-zinc-400">{description}</p>}
-            <div className="mt-4 flex justify-end gap-2">
-              <button type="button" onClick={() => setOpen(false)} className="rounded-md border border-[#262626] px-4 py-2 text-sm">Cancel</button>
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4 backdrop-blur-sm" onClick={() => setOpen(false)}>
+          <div className="w-full max-w-sm rounded-[14px] border border-[var(--th-border)] bg-[var(--th-surface)] p-6" onClick={(e) => e.stopPropagation()}>
+            <h3 className="text-[14px] font-[500] text-[var(--th-text)]">{title}</h3>
+            {description && <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--th-sub)]">{description}</p>}
+            <div className="mt-5 flex justify-end gap-2">
+              <button type="button" onClick={() => setOpen(false)} className="rounded-full border border-[var(--th-border)] px-4 py-2 text-[12px] font-[500] text-[var(--th-sub)] hover:text-[var(--th-text)] hover:border-[var(--th-text)]/15">
+                Cancel
+              </button>
               <button
                 type="button"
                 disabled={pending}
@@ -26,7 +28,7 @@ export function ConfirmDialog({ title, description, confirmLabel = "Delete", onC
                     setPending(false);
                   }
                 }}
-                className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                className="rounded-full bg-[var(--th-red)] px-4 py-2 text-[12px] font-[600] text-white hover:bg-[#b96a62] disabled:opacity-50"
               >
                 {pending ? "Deleting…" : confirmLabel}
               </button>
