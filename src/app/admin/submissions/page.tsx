@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { approveSubmissionAction, rejectSubmissionAction } from "@/lib/actions";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const dynamic = "force-dynamic";
 
@@ -21,8 +22,9 @@ export default async function AdminSubmissionsPage() {
         </div>
       ) : (
         <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          {subs.map((s) => (
-            <div key={s.id} className="overflow-hidden rounded-[14px] border border-[var(--th-border)] bg-[var(--th-surface)]">
+          {subs.map((s, i) => (
+            <Reveal key={s.id} delay={i * 0.04}>
+              <div className="overflow-hidden rounded-[14px] border border-[var(--th-border)] bg-[var(--th-surface)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
               <img src={s.imageUrl} alt={s.bookingCode} className="h-64 w-full object-contain bg-[#0E1013]" />
               <div className="p-4 space-y-2">
@@ -45,7 +47,8 @@ export default async function AdminSubmissionsPage() {
                   </form>
                 </div>
               </div>
-            </div>
+              </div>
+            </Reveal>
           ))}
         </div>
       )}

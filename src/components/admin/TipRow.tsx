@@ -3,10 +3,19 @@ import { ConfirmDialog } from "@/components/ui/ConfirmDialog";
 import { StatusControl } from "./StatusControl";
 import { deleteTipAction } from "@/lib/actions";
 import Link from "next/link";
+import { m } from "motion/react";
+import { viewportAdmin } from "@/lib/motion";
 
 export function TipRow({ tip }: { tip: any }) {
   return (
-    <div className="flex flex-col gap-3 rounded-none border-b border-[var(--th-border)] bg-transparent px-4 py-3.5 last:border-b-0 sm:flex-row sm:items-center sm:justify-between sm:px-5">
+    <m.div
+      layout="position"
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={viewportAdmin}
+      transition={{ duration: 0.15 }}
+      className="flex flex-col gap-3 rounded-none border-b border-[var(--th-border)] bg-transparent px-4 py-3.5 last:border-b-0 sm:flex-row sm:items-center sm:justify-between sm:px-5"
+    >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src={tip.imageUrl} alt={tip.bookingCode} className="h-10 w-16 object-cover rounded-[8px] bg-[#0E1013] border border-[var(--th-border)] shrink-0" />
@@ -42,7 +51,7 @@ export function TipRow({ tip }: { tip: any }) {
           </button>
         </ConfirmDialog>
       </div>
-    </div>
+    </m.div>
   );
 }
 

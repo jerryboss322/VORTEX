@@ -1,5 +1,7 @@
 "use client";
 import { useRef, useState, useCallback } from "react";
+import { AnimatePresence, m } from "motion/react";
+import { spring } from "@/lib/motion";
 
 const ALLOWED = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const MAX_BYTES = 10 * 1024 * 1024;
@@ -46,7 +48,6 @@ export function ImageUploader({ name = "image", required, initialUrl, variant = 
       const url = URL.createObjectURL(f);
       setPreview(url);
       onFileChange?.(f);
-      // set hidden input file list via DataTransfer
       if (inputRef.current) {
         const dt = new DataTransfer();
         dt.items.add(f);
@@ -70,7 +71,7 @@ export function ImageUploader({ name = "image", required, initialUrl, variant = 
 
   return (
     <div>
-      <div
+      <m.div
         role="button"
         tabIndex={0}
         aria-label="Upload slip image"
@@ -87,29 +88,44 @@ export function ImageUploader({ name = "image", required, initialUrl, variant = 
         onDragLeave={() => setDragOver(false)}
         onDrop={onDrop}
         onClick={() => inputRef.current?.click()}
-        className={`relative flex cursor-pointer flex-col items-center justify-center rounded-[14px] border border-dashed bg-[var(--th-chip)] p-4 text-center transition-colors ${height} ${dragOver ? "border-[var(--th-gold)] bg-[var(--th-gold)]/5" : "border-[var(--th-border)] hover:border-[var(--th-text)]/20"} ${error ? "border-[var(--th-red)]/50" : ""}`}
+        animate={{
+          borderColor: error ? "rgba(201,125,116,0.5)" : dragOver ? "var(--th-gold)" : "rgba(255,255,255,0.08)",
+          backgroundColor: dragOver ? "rgba(201,161,90,0.06)" : "rgba(255,255,255,0.05)",
+        }}
+        transition={{ duration: 0.18 }}
+        className={`relative flex cursor-pointer flex-col items-center justify-center rounded-[14px] border border-dashed p-4 text-center ${height}`}
       >
-        {preview ? (
-          <>
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src={preview} alt="Preview" className="max-h-40 w-auto rounded object-contain" />
-            {file && <span className="mt-2 text-[12px] text-[var(--th-sub)]">{file.name} · {(file.size / 1024 / 1024).toFixed(2)} MB</span>}
-            {!file && initialUrl && <span className="mt-2 text-[12px] text-[var(--th-sub)]">Current image — click or drop to replace</span>}
-          </>
-        ) : (
-          <>
-            <span className="text-[13px] font-[500] text-[var(--th-text)]">Drop slip here or click to browse</span>
-            <span className="mt-1 text-[12px] text-[var(--th-sub)]">JPEG, PNG, WEBP · Max 10MB</span>
-          </>
-        )}
+        <AnimatePresence mode="wait" initial={false}>
+          {preview ? (
+            <m.div key="preview" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={spring} className="flex flex-col items-center">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img src={preview} alt="Preview" className="max-h-40 w-auto rounded object-contain" />
+              {file && <span className="mt-2 text-[12px] text-[var(--th-sub)]">{file.name} · {(file.size / 1024 / 1024).toFixed(2)} MB</span>}
+              {!file && initialUrl && <span className="mt-2 text-[12px] text-[var(--th-sub)]">Current image — click or drop to replace</span>}
+            </m.div>
+          ) : (
+            <m.div key="empty" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.15 }} className="flex flex-col items-center">
+              <span className="text-[13px] font-[500] text-[var(--th-text)]">Drop slip here or click to browse</span>
+              <span className="mt-1 text-[12px] text-[var(--th-sub)]">JPEG, PNG, WEBP · Max 10MB</span>
+            </m.div>
+          )}
+        </AnimatePresence>
         <input ref={inputRef} name={name} type="file" accept="image/jpeg,image/png,image/webp" required={required && !preview} className="hidden" onChange={(e) => set(e.target.files?.[0] || null)} />
-      </div>
-      {preview && (
-        <button type="button" onClick={() => set(null)} className="mt-2 text-[12px] text-[var(--th-sub)] hover:text-[var(--th-text)] underline">
-          {file ? "Remove selection" : "Clear"}
-        </button>
-      )}
-      {error && <p className="mt-2 text-[12px] text-[var(--th-red)]" role="alert">{error}</p>}
+      </m.div>
+      <AnimatePresence>
+        {preview && (
+          <m.button initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} type="button" onClick={() => set(null)} className="mt-2 text-[12px] text-[var(--th-sub)] hover:text-[var(--th-text)] underline">
+            {file ? "Remove selection" : "Clear"}
+          </m.button>
+        )}
+      </AnimatePresence>
+      <AnimatePresence>
+        {error && (
+          <m.p initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={{ duration: 0.18 }} className="mt-2 text-[12px] text-[var(--th-red)]" role="alert">
+            {error}
+          </m.p>
+        )}
+      </AnimatePresence>
       {!error && <p className="mt-2 text-[11px] text-[var(--th-sub)]">Tip: crop tightly, keep text sharp.</p>}
     </div>
   );

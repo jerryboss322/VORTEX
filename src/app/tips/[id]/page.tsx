@@ -3,6 +3,7 @@ import { StatusBadge, statusAccent } from "@/components/ui/StatusBadge";
 import { CopyButton } from "@/components/ui/CopyButton";
 import { notFound } from "next/navigation";
 import { formatDateTime } from "@/lib/utils";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const dynamic = "force-dynamic";
 
@@ -22,7 +23,8 @@ export default async function TipDetail({ params }: { params: Promise<{ id: stri
   return (
     <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
       <a href="/tips" className="text-[12px] font-[500] tracking-[0.02em] text-[var(--th-sub)] hover:text-[var(--th-text)]">← Back to tips</a>
-      <div className="mt-4 overflow-hidden rounded-[18px] border border-[var(--th-border)] bg-[var(--th-surface)]">
+      <Reveal>
+        <div className="mt-4 overflow-hidden rounded-[18px] border border-[var(--th-border)] bg-[var(--th-surface)]">
         <div className={`h-[3px] w-full ${accent}`} aria-hidden />
         <div className="bg-[#0E1013]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -62,7 +64,8 @@ export default async function TipDetail({ params }: { params: Promise<{ id: stri
           </div>
           {tip.note && <div className="border-t border-[var(--th-border)] pt-4 text-[13px] leading-relaxed text-[var(--th-text)]">{tip.note}</div>}
         </div>
-      </div>
+        </div>
+      </Reveal>
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { TipGrid } from "@/components/tips/TipGrid";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { getResultsStats } from "@/lib/tips";
 import { StatsStrip } from "@/components/results/StatsStrip";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const dynamic = "force-dynamic";
 
@@ -59,8 +60,9 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
-      <div className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">
-        <h1 className="font-display text-[25px] font-[500] tracking-[-0.02em] text-[var(--th-text)]">Results</h1>
+      <Reveal>
+        <div className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">
+          <h1 className="font-display text-[25px] font-[500] tracking-[-0.02em] text-[var(--th-text)]">Results</h1>
         <p className="mt-1.5 text-[13px] leading-relaxed text-[var(--th-sub)]">Settled tips with credibility stats.</p>
 
         {stats && (
@@ -128,7 +130,8 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
             </a>
           ))}
         </div>
-      </div>
+        </div>
+      </Reveal>
 
       <div className="mt-8">
         {tips.length === 0 ? <EmptyState title="No completed tips yet." description="Settled slips appear here after admin marks results." /> : <TipGrid tips={tips} />}

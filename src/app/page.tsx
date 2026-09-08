@@ -3,6 +3,7 @@ import { TipCard } from "@/components/tips/TipCard";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { StatBar } from "@/components/tips/StatBar";
 import { getResultsStats } from "@/lib/tips";
+import { Reveal } from "@/components/ui/Reveal";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -18,7 +19,8 @@ export default async function Home() {
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
       {/* hero — ticket is the hero, nav is quiet; stat bar gives trust before list */}
-      <section className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">
+      <Reveal>
+        <section className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">
         <div className="flex flex-wrap items-start justify-between gap-6">
           <div>
             <div className="text-[12px] font-[400] tracking-[0.08em] uppercase text-[var(--th-sub)]">Private slips · {monthLabel}</div>
@@ -48,39 +50,44 @@ export default async function Home() {
             />
           </div>
         )}
-      </section>
+        </section>
+      </Reveal>
 
-      <section className="mt-8">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-[15px] font-[500] tracking-[-0.01em] text-[var(--th-text)]">Active Tips</h2>
-          <Link href="/tips" className="text-[12px] font-[500] tracking-[0.02em] text-[var(--th-sub)] hover:text-[var(--th-text)]">View all →</Link>
-        </div>
-        {active.length === 0 ? (
-          <EmptyState title="No tips have been published yet." description="Check back later — official slips appear here." />
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {active.map((t) => (
-              <TipCard key={t.id} tip={t} />
-            ))}
+      <Reveal delay={0.06}>
+        <section className="mt-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-[15px] font-[500] tracking-[-0.01em] text-[var(--th-text)]">Active Tips</h2>
+            <Link href="/tips" className="text-[12px] font-[500] tracking-[0.02em] text-[var(--th-sub)] hover:text-[var(--th-text)]">View all →</Link>
           </div>
-        )}
-      </section>
+          {active.length === 0 ? (
+            <EmptyState title="No tips have been published yet." description="Check back later — official slips appear here." />
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {active.map((t) => (
+                <TipCard key={t.id} tip={t} />
+              ))}
+            </div>
+          )}
+        </section>
+      </Reveal>
 
-      <section className="mt-10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="font-display text-[15px] font-[500] tracking-[-0.01em] text-[var(--th-text)]">Recent Results</h2>
-          <Link href="/results" className="text-[12px] font-[500] tracking-[0.02em] text-[var(--th-sub)] hover:text-[var(--th-text)]">View results →</Link>
-        </div>
-        {recentResults.length === 0 ? (
-          <EmptyState title="No completed tips yet." description="Settled slips will appear here once results are posted." />
-        ) : (
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {recentResults.map((t) => (
-              <TipCard key={t.id} tip={t} />
-            ))}
+      <Reveal delay={0.1}>
+        <section className="mt-10">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display text-[15px] font-[500] tracking-[-0.01em] text-[var(--th-text)]">Recent Results</h2>
+            <Link href="/results" className="text-[12px] font-[500] tracking-[0.02em] text-[var(--th-sub)] hover:text-[var(--th-text)]">View results →</Link>
           </div>
-        )}
-      </section>
+          {recentResults.length === 0 ? (
+            <EmptyState title="No completed tips yet." description="Settled slips will appear here once results are posted." />
+          ) : (
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {recentResults.map((t) => (
+                <TipCard key={t.id} tip={t} />
+              ))}
+            </div>
+          )}
+        </section>
+      </Reveal>
     </div>
   );
 }

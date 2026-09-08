@@ -3,6 +3,7 @@ import { Fraunces, Inter, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Header } from "@/components/layout/Header";
 import { Toaster } from "@/components/ui/Toast";
+import { MotionProvider } from "@/components/ui/MotionProvider";
 
 const fraunces = Fraunces({
   variable: "--font-fraunces",
@@ -42,12 +43,14 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html lang="en" suppressHydrationWarning className={`${fraunces.variable} ${inter.variable} ${geistMono.variable} h-full antialiased`}>
       <body suppressHydrationWarning className="min-h-full flex flex-col bg-[var(--th-bg)] text-[var(--th-text)]">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <Toaster />
-        <footer className="border-t border-[var(--th-border)] py-8 text-center">
-          <p className="text-[12px] leading-none tracking-[0.04em] text-[var(--th-sub)]">TipsHub — Private community. Not a bookmaker.</p>
-        </footer>
+        <MotionProvider>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <Toaster />
+          <footer className="border-t border-[var(--th-border)] py-8 text-center">
+            <p className="text-[12px] leading-none tracking-[0.04em] text-[var(--th-sub)]">TipsHub — Private community. Not a bookmaker.</p>
+          </footer>
+        </MotionProvider>
       </body>
     </html>
   );

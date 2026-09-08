@@ -2,13 +2,15 @@
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { ImageUploader } from "@/components/ui/ImageUploader";
+import { AnimatePresence, m } from "motion/react";
+import { spring } from "@/lib/motion";
 
 function SubmitButton({ mode }: { mode: "public" | "contributor" }) {
   const { pending } = useFormStatus();
   return (
-    <button disabled={pending} className="w-full rounded-full bg-[var(--th-text)] py-3 text-[13px] font-[600] tracking-[0.02em] text-[#0E1013] hover:bg-[#ddd8cf] disabled:opacity-50 disabled:cursor-not-allowed">
+    <m.button whileTap={{ scale: 0.97 }} transition={spring} disabled={pending} className="w-full rounded-full bg-[var(--th-text)] py-3 text-[13px] font-[600] tracking-[0.02em] text-[#0E1013] hover:bg-[#ddd8cf] disabled:opacity-50 disabled:cursor-not-allowed">
       {pending ? "Submitting…" : mode === "public" ? "Submit as Guest" : "Submit for Review"}
-    </button>
+    </m.button>
   );
 }
 
@@ -46,8 +48,20 @@ export function ContributorSubmitForm({ action, mode = "contributor" }: { action
 
   return (
     <form id="contrib-form" action={handle} className="space-y-5 rounded-[14px] border border-[var(--th-border)] bg-[var(--th-surface)] p-6 sm:p-7">
-      {error && <div className="rounded-[12px] border border-[var(--th-red)]/20 bg-[var(--th-red)]/10 px-3 py-2 text-[13px] text-[var(--th-red)]" role="alert">{error}</div>}
-      {success && <div className="rounded-[12px] border border-[var(--th-green)]/20 bg-[var(--th-green)]/10 px-3 py-2 text-[13px] text-[var(--th-green)]">{mode === "public" ? "Submitted as guest — admin will review shortly. No account needed." : "Submitted for review — admin will approve shortly."}</div>}
+      <AnimatePresence mode="wait" initial={false}>
+        {error && (
+          <m.div initial={{ opacity: 0, y: -6 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -4 }} transition={spring} className="rounded-[12px] border border-[var(--th-red)]/20 bg-[var(--th-red)]/10 px-3 py-2 text-[13px] text-[var(--th-red)]" role="alert">
+            {error}
+          </m.div>
+        )}
+      </AnimatePresence>
+      <AnimatePresence mode="wait" initial={false}>
+        {success && (
+          <m.div initial={{ opacity: 0, y: -6, scale: 0.98 }} animate={{ opacity: 1, y: 0, scale: 1 }} exit={{ opacity: 0 }} transition={spring} className="rounded-[12px] border border-[var(--th-green)]/20 bg-[var(--th-green)]/10 px-3 py-2 text-[13px] text-[var(--th-green)]">
+            {mode === "public" ? "Submitted as guest — admin will review shortly. No account needed." : "Submitted for review — admin will approve shortly."}
+          </m.div>
+        )}
+      </AnimatePresence>
 
       <div>
         <label className="text-[11px] font-[400] tracking-[0.08em] uppercase text-[var(--th-sub)]">Betting Slip *</label>

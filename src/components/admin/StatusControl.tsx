@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useRef, useState, useTransition } from "react";
+import { AnimatePresence, m } from "motion/react";
 import { updateTipStatusAction } from "@/lib/actions";
+import { spring, playfulSpring } from "@/lib/motion";
 
 const OPTIONS = [
   { value: "PENDING", label: "Pending", dot: "bg-[var(--th-gold)]" },
@@ -64,44 +66,69 @@ export function StatusControl({ id, status }: { id: string; status: string }) {
       >
         <span className={`h-1.5 w-1.5 rounded-full ${dotFor(display)}`} aria-hidden />
         {labelFor(display)}
-        <svg width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden className={`ml-0.5 transition-transform ${open ? "rotate-180" : ""}`}>
+        <m.svg
+          animate={{ rotate: open ? 180 : 0 }}
+          transition={{ duration: 0.18 }}
+          width="12"
+          height="12"
+          viewBox="0 0 12 12"
+          fill="none"
+          aria-hidden
+          className="ml-0.5"
+        >
           <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round" />
-        </svg>
+        </m.svg>
       </button>
 
-      {dirty && (
-        <button
-          type="button"
-          onClick={save}
-          disabled={saving}
-          className="rounded-full bg-[var(--th-gold)] px-3.5 py-1.5 text-[12px] font-[500] tracking-[0.02em] text-[#3A2E14] hover:bg-[#b98f45] disabled:opacity-50"
-        >
-          {saving ? "Saving…" : "Save"}
-        </button>
-      )}
+      <AnimatePresence>
+        {dirty && (
+          <m.button
+            key="save"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.85 }}
+            transition={playfulSpring}
+            type="button"
+            onClick={save}
+            disabled={saving}
+            className="rounded-full bg-[var(--th-gold)] px-3.5 py-1.5 text-[12px] font-[500] tracking-[0.02em] text-[#3A2E14] hover:bg-[#b98f45] disabled:opacity-50"
+          >
+            {saving ? "Saving…" : "Save"}
+          </m.button>
+        )}
+      </AnimatePresence>
 
-      {open && (
-        <div className="absolute left-0 top-[calc(100%+8px)] z-20 min-w-[160px] overflow-hidden rounded-[12px] border border-[var(--th-border)] bg-[var(--th-surface)] py-1 shadow-[0_16px_40px_rgba(0,0,0,0.5)]">
-          {OPTIONS.map((opt) => (
-            <button
-              key={opt.value}
-              type="button"
-              onClick={() => pick(opt.value)}
-              className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-[13px] hover:bg-[var(--th-chip)]"
-            >
-              <span className="inline-flex items-center gap-2">
-                <span className={`h-1.5 w-1.5 rounded-full ${opt.dot}`} aria-hidden />
-                <span className={display === opt.value ? "text-[var(--th-text)] font-[500]" : "text-[var(--th-sub)]"}>{opt.label}</span>
-              </span>
-              {display === opt.value && (
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden className="text-[var(--th-gold)]">
-                  <path d="M3 7L6 10L11 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
-              )}
-            </button>
-          ))}
-        </div>
-      )}
+      <AnimatePresence>
+        {open && (
+          <m.div
+            initial={{ opacity: 0, y: -6, scale: 0.98 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -4, scale: 0.98 }}
+            transition={spring}
+            style={{ originX: 0, originY: 0 }}
+            className="absolute left-0 top-[calc(100%+8px)] z-20 min-w-[160px] overflow-hidden rounded-[12px] border border-[var(--th-border)] bg-[var(--th-surface)] py-1 shadow-[0_16px_40px_rgba(0,0,0,0.5)]"
+          >
+            {OPTIONS.map((opt) => (
+              <button
+                key={opt.value}
+                type="button"
+                onClick={() => pick(opt.value)}
+                className="flex w-full items-center justify-between gap-3 px-3 py-2 text-left text-[13px] hover:bg-[var(--th-chip)]"
+              >
+                <span className="inline-flex items-center gap-2">
+                  <span className={`h-1.5 w-1.5 rounded-full ${opt.dot}`} aria-hidden />
+                  <span className={display === opt.value ? "text-[var(--th-text)] font-[500]" : "text-[var(--th-sub)]"}>{opt.label}</span>
+                </span>
+                {display === opt.value && (
+                  <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden className="text-[var(--th-gold)]">
+                    <path d="M3 7L6 10L11 4" stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" strokeLinejoin="round" />
+                  </svg>
+                )}
+              </button>
+            ))}
+          </m.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

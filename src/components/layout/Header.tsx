@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { isAdminPinOk, clearPinCookie } from "@/lib/adminPin";
 import { MobileToggle } from "./MobileToggle";
 import { NotificationBell } from "@/components/notifications/NotificationBell";
+import { AnimatedNavLink } from "./HeaderNav";
 
 function TicketIcon({ className = "h-[18px] w-[18px]" }: { className?: string }) {
   return (
@@ -57,8 +58,8 @@ export async function Header() {
 
         {/* Desktop */}
         <nav className="hidden items-center gap-6 sm:flex">
-          <NavLink href="/tips" label="Tips" active={isActive("/tips")} />
-          <NavLink href="/results" label="Results" active={isActive("/results")} />
+          <AnimatedNavLink href="/tips" label="Tips" />
+          <AnimatedNavLink href="/results" label="Results" />
           <Link
             href="/submit"
             className="rounded-full border border-[var(--th-border)] bg-transparent px-3.5 py-1.5 text-[12px] font-[500] tracking-[0.02em] text-[var(--th-text)] hover:border-[var(--th-text)]/20 hover:bg-[var(--th-chip)] transition-colors"

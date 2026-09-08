@@ -2,6 +2,7 @@ import { prisma } from "@/lib/db";
 import { DateGrouped } from "@/components/tips/TipGrid";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { groupByDate } from "@/lib/tips";
+import { Reveal } from "@/components/ui/Reveal";
 
 export const dynamic = "force-dynamic";
 
@@ -18,7 +19,8 @@ export default async function TipsPage({ searchParams }: { searchParams: Promise
 
   return (
     <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
-      <div className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">
+      <Reveal>
+        <div className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">
         <h1 className="font-display text-[25px] font-[500] tracking-[-0.02em] text-[var(--th-text)]">Tips</h1>
         <p className="mt-1.5 max-w-[560px] text-[13px] leading-relaxed text-[var(--th-sub)]">Browse official slips. Filter by code, bookmaker, or status.</p>
 
@@ -53,7 +55,8 @@ export default async function TipsPage({ searchParams }: { searchParams: Promise
             Clear
           </a>
         </form>
-      </div>
+        </div>
+      </Reveal>
 
       <div className="mt-8">
         {tips.length === 0 ? <EmptyState title="No tips found." description="Try a different filter or check back later." /> : <DateGrouped groups={groups} />}
