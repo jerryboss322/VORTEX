@@ -4,6 +4,7 @@ import { useFormStatus } from "react-dom";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import { AnimatePresence, m } from "motion/react";
 import { spring } from "@/lib/motion";
+import { RollingSpinner } from "@/components/ui/Skeleton";
 
 type GameRow = {
   id: string;
@@ -19,7 +20,8 @@ type GameRow = {
 function PublishBatchButton({ count }: { count: number }) {
   const { pending } = useFormStatus();
   return (
-    <m.button whileTap={{ scale: 0.97 }} transition={spring} disabled={pending} className="rounded-full bg-[var(--th-text)] px-6 py-2.5 text-[12px] font-[600] tracking-[0.02em] text-[#0E1013] hover:bg-[#ddd8cf] disabled:opacity-50">
+    <m.button whileTap={{ scale: 0.97 }} transition={spring} disabled={pending} className="inline-flex items-center gap-2 rounded-full bg-[var(--th-text)] px-6 py-2.5 text-[12px] font-[600] tracking-[0.02em] text-[#0E1013] hover:bg-[#ddd8cf] disabled:opacity-50">
+      {pending && <RollingSpinner size={12} />}
       {pending ? `Publishing ${count}…` : count === 1 ? "Publish Tip" : `Publish ${count} Tips`}
     </m.button>
   );

@@ -75,6 +75,12 @@ body {
   font-family: var(--font-fraunces), serif;
 }
 
+/* shimmer keyframes fallback for non-motion */
+@keyframes th-shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

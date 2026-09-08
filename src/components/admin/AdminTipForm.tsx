@@ -2,11 +2,13 @@
 import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { ImageUploader } from "@/components/ui/ImageUploader";
+import { RollingSpinner } from "@/components/ui/Skeleton";
 
 function PublishButton({ isEdit }: { isEdit?: boolean }) {
   const { pending } = useFormStatus();
   return (
-    <button disabled={pending} className="rounded-full bg-[var(--th-text)] px-6 py-2.5 text-[12px] font-[600] tracking-[0.02em] text-[#0E1013] hover:bg-[#ddd8cf] disabled:opacity-50">
+    <button disabled={pending} className="inline-flex items-center gap-2 rounded-full bg-[var(--th-text)] px-6 py-2.5 text-[12px] font-[600] tracking-[0.02em] text-[#0E1013] hover:bg-[#ddd8cf] disabled:opacity-50">
+      {pending && <RollingSpinner size={12} />}
       {pending ? (isEdit ? "Saving…" : "Publishing…") : isEdit ? "Save Changes" : "Publish Tip"}
     </button>
   );

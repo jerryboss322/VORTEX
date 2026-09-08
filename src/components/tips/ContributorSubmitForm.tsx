@@ -4,11 +4,13 @@ import { useFormStatus } from "react-dom";
 import { ImageUploader } from "@/components/ui/ImageUploader";
 import { AnimatePresence, m } from "motion/react";
 import { spring } from "@/lib/motion";
+import { RollingSpinner } from "@/components/ui/Skeleton";
 
 function SubmitButton({ mode }: { mode: "public" | "contributor" }) {
   const { pending } = useFormStatus();
   return (
-    <m.button whileTap={{ scale: 0.97 }} transition={spring} disabled={pending} className="w-full rounded-full bg-[var(--th-text)] py-3 text-[13px] font-[600] tracking-[0.02em] text-[#0E1013] hover:bg-[#ddd8cf] disabled:opacity-50 disabled:cursor-not-allowed">
+    <m.button whileTap={{ scale: 0.97 }} transition={spring} disabled={pending} className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-[var(--th-text)] py-3 text-[13px] font-[600] tracking-[0.02em] text-[#0E1013] hover:bg-[#ddd8cf] disabled:opacity-50 disabled:cursor-not-allowed">
+      {pending && <RollingSpinner size={13} />}
       {pending ? "Submitting…" : mode === "public" ? "Submit as Guest" : "Submit for Review"}
     </m.button>
   );

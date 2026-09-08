@@ -3,6 +3,7 @@ import { useEffect, useRef, useState, useTransition } from "react";
 import { AnimatePresence, m } from "motion/react";
 import { updateTipStatusAction } from "@/lib/actions";
 import { spring, playfulSpring } from "@/lib/motion";
+import { RollingSpinner } from "@/components/ui/Skeleton";
 
 const OPTIONS = [
   { value: "PENDING", label: "Pending", dot: "bg-[var(--th-gold)]" },
@@ -91,8 +92,9 @@ export function StatusControl({ id, status }: { id: string; status: string }) {
             type="button"
             onClick={save}
             disabled={saving}
-            className="rounded-full bg-[var(--th-gold)] px-3.5 py-1.5 text-[12px] font-[500] tracking-[0.02em] text-[#3A2E14] hover:bg-[#b98f45] disabled:opacity-50"
+            className="inline-flex items-center gap-1.5 rounded-full bg-[var(--th-gold)] px-3.5 py-1.5 text-[12px] font-[500] tracking-[0.02em] text-[#3A2E14] hover:bg-[#b98f45] disabled:opacity-50"
           >
+            {saving && <RollingSpinner size={11} className="text-[#3A2E14]" />}
             {saving ? "Saving…" : "Save"}
           </m.button>
         )}

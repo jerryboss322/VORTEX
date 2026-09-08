@@ -2,6 +2,7 @@
 import { useState } from "react";
 import { AnimatePresence, m } from "motion/react";
 import { spring } from "@/lib/motion";
+import { RollingSpinner } from "@/components/ui/Skeleton";
 
 export function ConfirmDialog({ title, description, confirmLabel = "Delete", onConfirm, children }: { title: string; description?: string; confirmLabel?: string; onConfirm: () => void | Promise<void>; children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
@@ -45,8 +46,9 @@ export function ConfirmDialog({ title, description, confirmLabel = "Delete", onC
                       setPending(false);
                     }
                   }}
-                  className="rounded-full bg-[var(--th-red)] px-4 py-2 text-[12px] font-[600] text-white hover:bg-[#b96a62] disabled:opacity-50"
+                  className="inline-flex items-center gap-2 rounded-full bg-[var(--th-red)] px-4 py-2 text-[12px] font-[600] text-white hover:bg-[#b96a62] disabled:opacity-50"
                 >
+                  {pending && <RollingSpinner size={12} className="text-white" />}
                   {pending ? "Deleting…" : confirmLabel}
                 </button>
               </div>
