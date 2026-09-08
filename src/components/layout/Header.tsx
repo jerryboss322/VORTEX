@@ -48,7 +48,7 @@ export async function Header() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-[var(--th-border)] bg-[var(--th-bg)]/85 backdrop-blur-[12px]">
-      <div className="mx-auto flex h-[56px] max-w-6xl items-center justify-between gap-6 px-4 sm:px-6">
+      <div className="mx-auto flex h-[56px] max-w-6xl items-center justify-between gap-6 px-5 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2.5 shrink-0">
           <span className="flex h-7 w-7 items-center justify-center rounded-[8px] bg-[var(--th-chip)] border border-[var(--th-border)] text-[var(--th-gold)]">
             <TicketIcon />
@@ -97,16 +97,16 @@ export async function Header() {
           <NotificationBell />
           <MobileToggle>
             <nav className="flex flex-col px-4 py-3 gap-1 text-sm">
-              <Link href="/tips" className="rounded-lg px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Tips</Link>
-              <Link href="/results" className="rounded-lg px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Results</Link>
-              <Link href="/submit" className="rounded-lg px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Submit Tip</Link>
+              <Link href="/tips" className="rounded-full px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Tips</Link>
+              <Link href="/results" className="rounded-full px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Results</Link>
+              <Link href="/submit" className="rounded-full px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Submit Tip</Link>
               {isAdmin ? (
                 <>
-                  <Link href="/admin" className="rounded-lg px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Dashboard</Link>
-                  <Link href="/admin/tips" className="rounded-lg px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Manage Tips</Link>
-                  <Link href="/admin/submissions" className="rounded-lg px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Submissions</Link>
+                  <Link href="/admin" className="rounded-full px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Dashboard</Link>
+                  <Link href="/admin/tips" className="rounded-full px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Manage Tips</Link>
+                  <Link href="/admin/submissions" className="rounded-full px-3 py-2 text-[var(--th-text)] hover:bg-[var(--th-chip)]">Submissions</Link>
                   <form action={logout}>
-                    <button className="w-full rounded-lg border border-[var(--th-border)] px-3 py-2 text-sm font-medium text-[var(--th-text)]">Logout</button>
+                    <button className="w-full rounded-full border border-[var(--th-border)] px-3 py-2 text-sm font-medium text-[var(--th-text)]">Logout</button>
                   </form>
                 </>
               ) : null}

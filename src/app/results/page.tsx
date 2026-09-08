@@ -59,7 +59,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
   }
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8 py-8">
       <Reveal>
         <div className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">
           <h1 className="font-display text-[25px] font-[500] tracking-[-0.02em] text-[var(--th-text)]">Results</h1>
@@ -71,7 +71,7 @@ export default async function ResultsPage({ searchParams }: { searchParams: Prom
           </div>
         )}
 
-        <form method="GET" className="mt-6 flex flex-wrap gap-2 rounded-[14px] border border-[var(--th-border)] bg-[var(--th-bg)]/60 p-3 items-end">
+        <form method="GET" className="mt-6 flex flex-wrap gap-3 rounded-[14px] border border-[var(--th-border)] bg-[var(--th-bg)]/60 p-4 items-end">
           {status !== "ALL" && <input type="hidden" name="status" value={status} />}
           <div className="flex flex-col">
             <label className="text-[11px] font-[400] tracking-[0.08em] uppercase text-[var(--th-sub)]">Search</label>

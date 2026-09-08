@@ -9,7 +9,7 @@ export function SlipViewer({ src, alt }: { src: string; alt: string }) {
     <>
       <button onClick={() => setOpen(true)} className="block w-full overflow-hidden bg-[#0E1013]">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={src} alt={alt} className="h-auto w-full object-contain max-h-[380px]" loading="lazy" />
+        <img src={src} alt={alt} className="h-auto w-full object-contain max-h-[420px]" loading="lazy" decoding="async" sizes="(max-width:640px) 100vw, (max-width:1024px) 50vw, 33vw" />
       </button>
       <AnimatePresence>
         {open && (
@@ -37,7 +37,7 @@ export function SlipViewer({ src, alt }: { src: string; alt: string }) {
                 ✕
               </button>
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={src} alt={alt} className="w-full h-auto max-h-[90vh] object-contain rounded-[14px] bg-black" />
+              <img src={src} alt={alt} className="w-full h-auto max-h-[90vh] object-contain rounded-[14px] bg-black" decoding="async" />
             </m.div>
           </m.div>
         )}

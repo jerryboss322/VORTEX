@@ -39,7 +39,7 @@ export function StatsStrip({ stats }: { stats: ResultsStats }) {
   ];
 
   return (
-    <m.div initial="initial" whileInView="animate" viewport={viewportOnce} variants={staggerContainer} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+    <m.div initial="initial" whileInView="animate" viewport={viewportOnce} variants={staggerContainer} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
       {cards.map((c) => (
         <m.div key={c.label} variants={{ initial: { opacity: 0, y: 8 }, animate: { opacity: 1, y: 0, transition: spring } }} className="rounded-[14px] border border-[var(--th-border)] bg-[var(--th-surface)] p-5">
           <div className="text-[11px] font-[400] tracking-[0.08em] uppercase text-[var(--th-sub)]">{c.label}</div>

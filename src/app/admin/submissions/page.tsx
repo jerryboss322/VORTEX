@@ -10,7 +10,7 @@ export default async function AdminSubmissionsPage() {
     subs = await prisma.submission.findMany({ where: { status: "PENDING" }, orderBy: { createdAt: "desc" }, include: { submittedBy: true } });
   } catch {}
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8 py-8">
       <div className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">
         <h1 className="font-display text-[25px] font-[500] tracking-[-0.02em] text-[var(--th-text)]">Awaiting Review</h1>
         <p className="mt-1.5 text-[13px] text-[var(--th-sub)]">{subs.length} pending submission{subs.length !== 1 ? "s" : ""} — approve to publish as official tip.</p>
@@ -26,7 +26,7 @@ export default async function AdminSubmissionsPage() {
             <Reveal key={s.id} delay={i * 0.04}>
               <div className="overflow-hidden rounded-[14px] border border-[var(--th-border)] bg-[var(--th-surface)]">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={s.imageUrl} alt={s.bookingCode} className="h-64 w-full object-contain bg-[#0E1013]" />
+              <img src={s.imageUrl} alt={s.bookingCode} className="w-full aspect-[16/10] max-h-[420px] object-contain bg-[#0E1013]" loading="lazy" decoding="async" sizes="(max-width:640px) 100vw, 50vw" />
               <div className="p-4 space-y-2">
                 <div className="text-[11px] tracking-[0.04em] text-[var(--th-sub)]">
                   {s.submittedBy ? `Contributor: ${s.submittedBy.email}` : s.guestName ? `Guest: ${s.guestName}` : "Guest"} {s.source === "member" && !s.submittedBy ? "· member" : ""}

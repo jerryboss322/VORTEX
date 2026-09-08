@@ -10,7 +10,7 @@ export default async function EditTipPage({ params }: { params: Promise<{ id: st
   try { tip = await prisma.tip.findUnique({ where: { id } }); } catch {}
   if (!tip) notFound();
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-3xl px-5 sm:px-6 lg:px-8 py-8">
       <Link href="/admin/tips" className="text-xs text-zinc-400 hover:text-white">← Back to tips</Link>
       <h1 className="mt-2 text-xl font-bold">Edit Tip — Odds Editable</h1>
       <p className="text-sm text-zinc-500">Update booking code, odds, confidence, or replace slip. R2 image will be replaced on upload.</p>

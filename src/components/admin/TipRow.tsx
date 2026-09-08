@@ -14,11 +14,11 @@ export function TipRow({ tip }: { tip: any }) {
       whileInView={{ opacity: 1 }}
       viewport={viewportAdmin}
       transition={{ duration: 0.15 }}
-      className="flex flex-col gap-3 rounded-none border-b border-[var(--th-border)] bg-transparent px-4 py-3.5 last:border-b-0 sm:flex-row sm:items-center sm:justify-between sm:px-5"
+      className="flex flex-col gap-3 rounded-none border-b border-[var(--th-border)] bg-transparent px-5 py-4 last:border-b-0 sm:flex-row sm:items-center sm:justify-between"
     >
       <div className="flex items-center gap-3 min-w-0 flex-1">
         {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img src={tip.imageUrl} alt={tip.bookingCode} className="h-10 w-16 object-cover rounded-[8px] bg-[#0E1013] border border-[var(--th-border)] shrink-0" />
+        <img src={tip.imageUrl} alt={tip.bookingCode} className="h-12 w-20 object-contain bg-[#0E1013] rounded-[8px] border border-[var(--th-border)] shrink-0" loading="lazy" decoding="async" />
         <div className="min-w-0">
           <div className="font-mono text-[13px] font-[500] tracking-[0.04em] text-[var(--th-text)] truncate">{tip.bookingCode}</div>
           <div className="text-[12px] text-[var(--th-sub)] truncate">

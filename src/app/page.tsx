@@ -17,7 +17,7 @@ export default async function Home() {
   const monthLabel = now.toLocaleDateString("en-GB", { month: "long", year: "numeric" });
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8 py-8">
       {/* hero — ticket is the hero, nav is quiet; stat bar gives trust before list */}
       <Reveal>
         <section className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">

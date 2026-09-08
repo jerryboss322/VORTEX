@@ -47,7 +47,7 @@ export function TipCard({ tip }: { tip: Tip }) {
         <SlipViewer src={tip.imageUrl} alt={`Slip ${tip.bookingCode}`} />
       </div>
 
-      <div className="flex items-center justify-between gap-3 px-5 pt-4">
+      <div className="flex items-center justify-between gap-3 px-5 sm:px-6 pt-5">
         <span className="text-[12px] font-[400] tracking-[0.04em] text-[var(--th-sub)]">{tip.bookmaker}</span>
         <span className="inline-flex items-center gap-1.5 text-[12px] font-[400] text-[var(--th-sub)]">
           <span className={`h-1.5 w-1.5 rounded-full ${dot}`} aria-hidden />
@@ -55,7 +55,7 @@ export function TipCard({ tip }: { tip: Tip }) {
         </span>
       </div>
 
-      <div className="grid grid-cols-[1.2fr_0.9fr] gap-4 px-5 pt-3">
+      <div className="grid grid-cols-[1.2fr_0.9fr] gap-4 px-5 sm:px-6 pt-4">
         <div>
           <div className="font-display text-[32px] font-[500] leading-none tracking-[-0.03em] text-[var(--th-text)]">
             {odds != null ? odds.toFixed(2) : "—"}
@@ -79,14 +79,14 @@ export function TipCard({ tip }: { tip: Tip }) {
         <div className="mx-5 flex-1 border-t border-dashed border-[var(--th-border)]" />
       </div>
 
-      <div className="flex items-center justify-between gap-3 px-5 pb-5">
+      <div className="flex items-center justify-between gap-3 px-5 sm:px-6 pb-5">
         <span className="inline-flex items-center rounded-[9px] border border-[var(--th-border)] bg-[var(--th-chip)] px-3 py-1.5 font-mono text-[13px] font-[500] tracking-[0.06em] text-[var(--th-text)]">
           {tip.bookingCode}
         </span>
         <CopyButton code={tip.bookingCode} />
       </div>
 
-      <div className="border-t border-[var(--th-border)] px-5 py-2.5 flex items-center justify-between">
+      <div className="border-t border-[var(--th-border)] px-5 sm:px-6 py-3 flex items-center justify-between">
         <span className="text-[12px] text-[var(--th-sub)]">{formatDate(tip.createdAt)}</span>
         <Link href={`/tips/${tip.id}`} className="text-[12px] font-[500] tracking-[0.02em] text-[var(--th-sub)] hover:text-[var(--th-text)]">
           View details →

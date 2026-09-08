@@ -21,14 +21,14 @@ export default async function TipDetail({ params }: { params: Promise<{ id: stri
   if (!tip) notFound();
   const accent = statusAccent(tip.status);
   return (
-    <div className="mx-auto max-w-3xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-3xl px-5 sm:px-6 lg:px-8 py-8">
       <a href="/tips" className="text-[12px] font-[500] tracking-[0.02em] text-[var(--th-sub)] hover:text-[var(--th-text)]">← Back to tips</a>
       <Reveal>
         <div className="mt-4 overflow-hidden rounded-[18px] border border-[var(--th-border)] bg-[var(--th-surface)]">
         <div className={`h-[3px] w-full ${accent}`} aria-hidden />
         <div className="bg-[#0E1013]">
           {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img src={tip.imageUrl} alt={tip.bookingCode} className="w-full h-auto max-h-[700px] object-contain" />
+          <img src={tip.imageUrl} alt={tip.bookingCode} className="w-full h-auto max-h-[75vh] object-contain" loading="lazy" decoding="async" sizes="(max-width:768px) 100vw, 768px" />
         </div>
         <div className="p-6 space-y-5">
           <div className="flex items-center justify-between gap-3">

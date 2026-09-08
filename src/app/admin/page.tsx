@@ -20,7 +20,7 @@ export default async function AdminPage() {
   const stats = await getResultsStats({}).catch(() => null);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8 py-8">
       <div className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">
         <h1 className="font-display text-[25px] font-[500] tracking-[-0.02em] text-[var(--th-text)]">Admin</h1>
         <p className="mt-1.5 text-[13px] text-[var(--th-sub)]">PIN 1740 — simple controls.</p>

@@ -9,7 +9,7 @@ export default async function AdminTipsPage() {
   let tips: any[] = [];
   try { tips = await prisma.tip.findMany({ orderBy: { createdAt: "desc" } }); } catch {}
   return (
-    <div className="mx-auto max-w-6xl px-4 sm:px-6 py-8">
+    <div className="mx-auto max-w-6xl px-5 sm:px-6 lg:px-8 py-8">
       <div className="rounded-[20px] border border-[var(--th-border)] bg-[var(--th-surface)] p-7 sm:p-8">
         <div className="flex items-baseline justify-between gap-4">
           <h1 className="font-display text-[25px] font-[500] tracking-[-0.02em] text-[var(--th-text)]">Manage Tips</h1>

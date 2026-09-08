@@ -179,7 +179,7 @@ export function NotificationBell() {
                             </div>
                             {n.body && <div className="mt-0.5 line-clamp-2 text-[12px] leading-relaxed text-[var(--th-sub)]">{n.body}</div>}
                             <div className="mt-1.5 flex flex-wrap items-center gap-2">
-                              {n.bookingCode && <span className="rounded-[6px] border border-[var(--th-border)] bg-[var(--th-chip)] px-1.5 py-0.5 text-[11px] font-mono text-[var(--th-text)]">{n.bookingCode}</span>}
+                              {n.bookingCode && <span className="rounded-[9px] border border-[var(--th-border)] bg-[var(--th-chip)] px-1.5 py-0.5 text-[11px] font-mono text-[var(--th-text)]">{n.bookingCode}</span>}
                               {n.bookmaker && <span className="text-[11px] text-[var(--th-sub)]">{n.bookmaker}</span>}
                               <span className={`inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-[400] ${!n.read ? "bg-[var(--th-gold)] text-[#3A2E14]" : "bg-[var(--th-chip)] text-[var(--th-sub)]"}`}>{meta.label}</span>
                             </div>

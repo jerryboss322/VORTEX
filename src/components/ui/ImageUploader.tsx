@@ -67,7 +67,7 @@ export function ImageUploader({ name = "image", required, initialUrl, variant = 
     [set]
   );
 
-  const height = variant === "hero" ? "min-h-[180px]" : "min-h-[120px]";
+  const height = variant === "hero" ? "min-h-[200px]" : "min-h-[140px]";
 
   return (
     <div>
@@ -93,13 +93,13 @@ export function ImageUploader({ name = "image", required, initialUrl, variant = 
           backgroundColor: dragOver ? "rgba(201,161,90,0.06)" : "rgba(255,255,255,0.05)",
         }}
         transition={{ duration: 0.18 }}
-        className={`relative flex cursor-pointer flex-col items-center justify-center rounded-[14px] border border-dashed p-4 text-center ${height}`}
+        className={`relative flex cursor-pointer flex-col items-center justify-center rounded-[14px] border border-dashed p-5 text-center ${height}`}
       >
         <AnimatePresence mode="wait" initial={false}>
           {preview ? (
             <m.div key="preview" initial={{ opacity: 0, scale: 0.98 }} animate={{ opacity: 1, scale: 1 }} exit={{ opacity: 0 }} transition={spring} className="flex flex-col items-center">
               {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={preview} alt="Preview" className="max-h-40 w-auto rounded object-contain" />
+              <img src={preview} alt="Preview" className="max-h-56 w-auto max-w-full rounded-[8px] object-contain" decoding="async" />
               {file && <span className="mt-2 text-[12px] text-[var(--th-sub)]">{file.name} · {(file.size / 1024 / 1024).toFixed(2)} MB</span>}
               {!file && initialUrl && <span className="mt-2 text-[12px] text-[var(--th-sub)]">Current image — click or drop to replace</span>}
             </m.div>
