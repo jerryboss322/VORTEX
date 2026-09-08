@@ -1,5 +1,6 @@
 import { verifyPin, setPinCookie } from "@/lib/adminPin";
 import { redirect } from "next/navigation";
+import { PinSubmitButton } from "@/components/admin/PinSubmitButton";
 
 export const dynamic = "force-dynamic";
 
@@ -40,7 +41,7 @@ export default async function AdminPinPage({ searchParams }: { searchParams: Pro
             autoFocus
           />
         </div>
-        <button className="w-full rounded-full bg-[var(--th-text)] py-3 text-[13px] font-[600] tracking-[0.02em] text-[#0E1013] hover:bg-[#ddd8cf]">Unlock</button>
+        <PinSubmitButton />
       </form>
     </div>
   );
